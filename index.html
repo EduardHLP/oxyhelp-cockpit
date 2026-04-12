@@ -3412,11 +3412,16 @@ async function getAssignTargets(){
       for(const doc of snap.docs){
         if(doc.id === fbUser.uid) continue; // skip self, added separately
         const data = doc.data();
-        if(data.email) targets.push({
-          uid: doc.id,
-          email: data.email,
-          name: data.displayName || data.email
-        });
+        if(data.email) {
+          // Dacă documentul are visibleTo, arată userul doar celor din listă
+          const visibleTo = data.visibleTo || null;
+          if(visibleTo && !visibleTo.includes(fbUser.email.toLowerCase())) continue;
+          targets.push({
+            uid: doc.id,
+            email: data.email,
+            name: data.displayName || data.email
+          });
+        }
       }
     } else {
       // Regular user — only accounts where they have assign permission
