@@ -3561,13 +3561,19 @@ async function subscribeToPush() {
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
       });
     }
-    // Store subscription in Firestore
+    const subStr = JSON.stringify(sub);
+    const doc = await fbDb.collection('users').doc(fbUser.uid).get();
+    const existing = doc.exists ? (doc.data().pushSubscriptions || []) : [];
+    const subObj = JSON.parse(subStr);
+    const filtered = existing.filter(s => {
+      try { return JSON.parse(s).endpoint !== subObj.endpoint; } catch { return true; }
+    });
+    filtered.push(subStr);
     await fbDb.collection('users').doc(fbUser.uid).set({
-      pushSubscription: JSON.stringify(sub),
+      pushSubscriptions: filtered,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
-    console.log('[Push] Subscribed and stored');
-    // Remove bell if still there
+    console.log('[Push] Subscribed — total devices:', filtered.length);
     const bell = document.getElementById('push-bell-btn');
     if (bell) bell.remove();
   } catch(e) {
@@ -3579,13 +3585,22 @@ async function sendPushToUser(targetUid, title, body, data = {}) {
   if (!fbDb) return;
   try {
     const doc = await fbDb.collection('users').doc(targetUid).get();
-    if (!doc.exists || !doc.data().pushSubscription) return;
-    const subscription = doc.data().pushSubscription;
-    await fetch('/.netlify/functions/push', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subscription, title, body, data })
-    });
+    if (!doc.exists) return;
+    const d = doc.data();
+    let subscriptions = [];
+    if (d.pushSubscriptions && Array.isArray(d.pushSubscriptions)) {
+      subscriptions = d.pushSubscriptions;
+    } else if (d.pushSubscription) {
+      subscriptions = [d.pushSubscription];
+    }
+    if (!subscriptions.length) return;
+    await Promise.allSettled(subscriptions.map(subscription =>
+      fetch('/.netlify/functions/push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscription, title, body, data })
+      })
+    ));
   } catch(e) {
     console.warn('[Push] Send failed:', e.message);
   }
