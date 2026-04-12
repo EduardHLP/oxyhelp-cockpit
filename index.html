@@ -407,19 +407,34 @@ main{display:-webkit-flex;display:flex;-webkit-flex:1;flex:1;overflow:hidden;min
 .drawer-body{flex:1;overflow-y:auto;padding:8px 10px 24px;}
 
 @media(max-width:768px){
-  header{padding:0 14px;height:48px;gap:8px;}
-  .logo-wordmark{height:19px;}
+  /* ── HEADER MOBIL ── */
+  header{padding:0 12px;height:50px;gap:6px;}
+  .logo-wordmark{height:18px;}
   .header-sep{display:none;}
   #dt{display:none;}
   .ai-badge{display:none;}
+  /* Ascunde butoanele mai puțin importante pe mobil */
   .btn-hdr.ghost[onclick*="openEOD"]{display:none;}
-  #btn-key{font-size:11px;padding:5px 9px;border-radius:16px;}
-  /* Compact AI button — just "AI" + dot */
-  #btn-key::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;background:var(--text-faint);vertical-align:middle;}
-  #btn-key.ai-on::before{background:var(--green);}
+  .btn-hdr.ghost[onclick*="openTeamBrief"]{display:none;}
+  #spotify-widget{display:none!important;}
+  /* Sidebar resize handle */
+  #sidebar-resize{display:none;}
+  /* Buton AI compact */
+  #btn-key{font-size:11px;padding:5px 10px;border-radius:16px;}
+  /* Reports buton mai mic */
+  .btn-hdr[onclick*="openReports"]{font-size:11px;padding:5px 12px;}
+  /* Switch compact */
+  .qs-btn{padding:4px 8px 4px 4px!important;}
+  /* Push bell compact */
+  #push-bell-btn{font-size:14px;padding:6px 9px;}
 
-  /* Hide desktop left panel, show strip instead */
+  /* ── LAYOUT ── */
   #left{display:none;}
+  #sidebar-rail{display:none!important;}
+  main{flex-direction:column;-webkit-flex-direction:column;}
+  #right{display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;overflow:hidden;min-height:0;flex:1;}
+
+  /* ── MOBILE TASK STRIP ── */
   #mobile-task-strip{display:flex;flex-direction:column;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;}
   .strip-top{display:flex;align-items:center;padding:7px 14px 5px;gap:8px;}
   .strip-date{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-faint);}
@@ -434,21 +449,31 @@ main{display:-webkit-flex;display:flex;-webkit-flex:1;flex:1;overflow:hidden;min
   .sp-dot.overdue{background:var(--red);border-color:var(--red);}
   .sp-dot.waiting{background:var(--blue);border-color:var(--blue);}
   .sp-dot.blocked{background:var(--amber);border-color:var(--amber);}
-  .sp-text{font-size:11px;font-weight:500;color:var(--text);max-width:120px;overflow:hidden;text-overflow:ellipsis;}
+  .sp-text{font-size:11px;font-weight:500;color:var(--text);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
-  main{flex-direction:column;-webkit-flex-direction:column;}
-  #right{display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;overflow:hidden;min-height:0;flex:1;}
-  #chat-msgs{flex:1;-webkit-flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;}
-  #chips{padding:6px 12px 3px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  /* ── CHAT ── */
+  #chat-msgs{flex:1;-webkit-flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;padding:12px 10px;}
+  .msg{max-width:88%;}
+
+  /* ── BOTTOM CHIPS ── */
+  #chips{padding:6px 10px 3px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
   #chips::-webkit-scrollbar{display:none;}
-  .chip{white-space:nowrap;flex-shrink:0;font-size:11px;padding:5px 11px;}
-  #input-bar{padding:8px 12px 14px;gap:8px;position:relative;z-index:10;background:var(--bg2);}
+  .chip{white-space:nowrap;flex-shrink:0;font-size:11px;padding:5px 10px;}
+
+  /* ── ASSIGN TO ── */
+  #assignee-row{padding:4px 10px;}
+
+  /* ── INPUT BAR ── */
+  #input-bar{padding:8px 10px 14px;gap:6px;position:relative;z-index:10;background:var(--bg2);}
   #chat-in{font-size:16px!important;-webkit-appearance:none;border-radius:22px;}
   #send-btn{-webkit-appearance:none;flex-shrink:0;}
+
+  /* ── MODALS ── */
   .overlay{align-items:flex-end;}
   .modal{width:100%;border-radius:20px 20px 0 0;max-height:90vh;}
   .modal.sm{width:100%;border-radius:20px 20px 0 0;}
-  /* User button compact */
+
+  /* ── USER BTN ── */
   .user-name{display:none;}
   .user-btn{padding:4px 8px 4px 4px;}
 }
