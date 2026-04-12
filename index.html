@@ -3510,16 +3510,37 @@ async function initPushNotifications() {
   try {
     swRegistration = await navigator.serviceWorker.register('/sw.js');
     console.log('[Push] Service worker registered');
-    // If permission already granted, subscribe silently
     if (Notification.permission === 'granted') {
       await subscribeToPush();
+      showPushStatus(true);
     } else if (Notification.permission === 'default') {
-      // Show notification bell button to trigger permission via user gesture
       showPushBell();
+    } else {
+      showPushStatus(false);
     }
   } catch(e) {
     console.warn('[Push] SW registration failed:', e.message);
   }
+}
+
+function showPushStatus(active) {
+  const existing = document.getElementById('push-status-btn');
+  if (existing) existing.remove();
+  const btn = document.createElement('button');
+  btn.id = 'push-status-btn';
+  btn.className = 'btn-hdr ghost';
+  btn.style.cssText = 'font-size:14px;padding:5px 9px;opacity:0.7;cursor:default;';
+  btn.title = active ? 'Notificări active pe acest device' : 'Notificările sunt blocate';
+  btn.innerHTML = active ? '🔔' : '🔕';
+  if (!active) {
+    btn.style.opacity = '0.4';
+    btn.style.cursor = 'pointer';
+    btn.onclick = () => {
+      alert('Notificările sunt blocate. Mergi la setările browserului și permite notificările pentru acest site.');
+    };
+  }
+  const hdrRight = document.querySelector('.hdr-right');
+  if (hdrRight) hdrRight.prepend(btn);
 }
 
 function showPushBell() {
@@ -3530,16 +3551,16 @@ function showPushBell() {
   bell.className = 'btn-hdr ghost';
   bell.title = 'Activează notificările push';
   bell.innerHTML = '🔔';
-  bell.style.cssText = 'font-size:16px;padding:7px 10px;animation:pulse 2s infinite;';
+  bell.style.cssText = 'font-size:14px;padding:6px 9px;animation:pulse 2s infinite;';
   bell.onclick = async () => {
     bell.remove();
     await subscribeToPush();
+    showPushStatus(true);
   };
-  // Add pulse animation
   if (!document.getElementById('bell-style')) {
     const s = document.createElement('style');
     s.id = 'bell-style';
-    s.textContent = '@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}';
+    s.textContent = '@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}';
     document.head.appendChild(s);
   }
   const hdrRight = document.querySelector('.hdr-right');
