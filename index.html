@@ -4249,7 +4249,170 @@ async function initApp(){
         break;
       }
     }
+    // Detect external messages after text is pasted
+    setTimeout(() => {
+      const text = inp.value.trim();
+      if(text.length > 150 && isLikelyExternalMessage(text)) {
+        showExternalMsgBanner(text);
+      }
+    }, 60);
   });
+
+  // ═══════════════════════════════════════════════════════
+  //  EXTERNAL MESSAGE DETECTION & EXTRACTION
+  // ═══════════════════════════════════════════════════════
+
+  function isLikelyExternalMessage(text) {
+    const hasTimestamps = /\[\d{2}[.\/]\d{2}[.\/]\d{4}.*\]/.test(text);
+    const hasEmailFrom = /(^|\n)(from|de la|de:|subject:|subiect:)/im.test(text);
+    const hasGreeting = /^(dear |hi |hello |salut |bun[aă] |hei )/i.test(text.trim());
+    const hasMultipleSenders = (text.match(/\] [A-ZĂÂÎȘȚ][a-zăâîșț]+ [A-ZĂÂÎȘȚ][a-zăâîșț]+:/g)||[]).length > 1;
+    const lineCount = text.split('\n').filter(l=>l.trim()).length;
+    return hasTimestamps || hasEmailFrom || hasGreeting || hasMultipleSenders || lineCount > 8;
+  }
+
+  let _extBannerActive = false;
+  function showExternalMsgBanner(text) {
+    if(_extBannerActive) return;
+    _extBannerActive = true;
+    document.getElementById('ext-msg-banner')?.remove();
+    const banner = document.createElement('div');
+    banner.id = 'ext-msg-banner';
+    banner.style.cssText = 'position:absolute;bottom:calc(100% + 8px);left:0;right:0;background:var(--bg2);border:1.5px solid var(--brand);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.18);z-index:200;';
+    banner.innerHTML = `
+      <span style="font-size:18px;flex-shrink:0;">📋</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:700;color:var(--brand);margin-bottom:1px;">Mesaj extern detectat</div>
+        <div style="font-size:11px;color:var(--text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Extrag taskurile automat din acest mesaj?</div>
+      </div>
+      <button id="ext-extract-btn" style="background:var(--brand);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap;flex-shrink:0;">✦ Extrage taskuri</button>
+      <button id="ext-dismiss-btn" style="background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:20px;padding:0 4px;line-height:1;flex-shrink:0;">×</button>
+    `;
+    const bar = document.getElementById('input-bar');
+    bar.style.position = 'relative';
+    bar.appendChild(banner);
+
+    document.getElementById('ext-extract-btn').onclick = async () => {
+      banner.remove(); _extBannerActive = false;
+      const raw = inp.value.trim();
+      inp.value = ''; inp.style.height = 'auto';
+      await extractExternalMsg(raw);
+    };
+    document.getElementById('ext-dismiss-btn').onclick = () => {
+      banner.remove(); _extBannerActive = false;
+    };
+    setTimeout(() => { banner?.isConnected && banner.remove(); _extBannerActive = false; }, 9000);
+  }
+
+  async function extractExternalMsg(text) {
+    if(!aiEnabled) {
+      botMsg('⚠️ AI offline — activează AI pentru a extrage taskuri din mesaj.');
+      return;
+    }
+    showTyping();
+    const today = todayKey();
+    const systemPrompt = `You are a task extraction assistant. The user has pasted an external message (email, WhatsApp, client message, etc.).
+
+Your job:
+1. Read the message and identify what actions are required FROM THE USER'S PERSPECTIVE
+2. Create clean, concise, verb-first task titles in the same language as the message
+3. If a message is purely informational with no action needed, create a NOTE instead
+4. If multiple actions are needed, create multiple tasks
+5. Extract due dates if explicitly mentioned (ISO format YYYY-MM-DD)
+6. Assign priority: "high" if urgent/ASAP/overdue follow-up, "medium" otherwise
+
+Rules for task titles:
+- Short and action-oriented (5-10 words max)
+- Written from user's perspective ("Trimite...", "Clarifică...", "Răspunde...", "Aprobă...")
+- No raw email text, greetings, signatures, or disclaimers in titles
+- Preserve original language (Romanian stays Romanian, English stays English)
+
+Today's date: ${today}
+
+Return ONLY valid JSON, no prose:
+{
+  "items": [
+    {
+      "type": "task",
+      "title": "Verb-first short title",
+      "priority": "high|medium|low",
+      "dueDate": "YYYY-MM-DD or null",
+      "note": "optional short context for this task"
+    },
+    {
+      "type": "note", 
+      "title": "Short note title",
+      "content": "What to remember"
+    }
+  ],
+  "sourceLabel": "email|whatsapp|client message|colaborator message"
+}`;
+
+    try {
+      const k = getKey();
+      const headers = {'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
+      if(k) headers['x-api-key'] = k;
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST',
+        headers,
+        body: JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:1500,
+          system: systemPrompt,
+          messages:[{role:'user',content:`Extract tasks from this message:\n\n${text}`}]
+        })
+      });
+      const data = await resp.json();
+      hideTyping();
+      const raw = data.content?.[0]?.text || '';
+      let parsed;
+      try { parsed = JSON.parse(raw.replace(/```json|```/g,'')); } catch { botMsg('❌ Nu am putut procesa mesajul.'); return; }
+
+      const items = parsed.items || [];
+      const label = parsed.sourceLabel || 'external message';
+      if(!items.length) { botMsg('ℹ️ Nu am găsit acțiuni clare în acest mesaj.'); return; }
+
+      // Show summary and create tasks
+      let summary = `📋 **Detectat din ${label}** — ${items.filter(i=>i.type==='task').length} task(uri), ${items.filter(i=>i.type==='note').length} notă(e):\n\n`;
+      const dk = todayKey();
+      for(const item of items) {
+        if(item.type === 'task') {
+          const id = 'T'+Date.now()+Math.random().toString(36).slice(2,6);
+          const task = {
+            id, text: item.title,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            completedAt: null, droppedAt: null,
+            status: 'todo',
+            waitingOn: '', blockedReason: '',
+            lastMeaningfulActivityAt: new Date().toISOString(),
+            category: item.priority === 'high' ? 'high' : 'medium',
+            carryForwardCount: 0, notes: [],
+            followUpAt: item.dueDate || null,
+            sourceLabel: label
+          };
+          // Add to today's tasks
+          let data = getLocalData();
+          if(!data.days[dk]) data.days[dk] = {tasks:[],notes:[]};
+          data.days[dk].tasks.push(task);
+          setLocalData(data);
+          await saveData();
+          summary += `✅ **${item.title}**`;
+          if(item.priority === 'high') summary += ' 🔴';
+          if(item.dueDate) summary += ` · due ${item.dueDate}`;
+          if(item.note) summary += `\n   _${item.note}_`;
+          summary += '\n';
+        } else if(item.type === 'note') {
+          summary += `📝 _Notă: ${item.title}${item.content ? ' — '+item.content : ''}_\n`;
+        }
+      }
+      botMsg(summary);
+      renderLeft();
+    } catch(e) {
+      hideTyping();
+      botMsg('❌ Eroare la procesarea mesajului: ' + e.message);
+    }
+  }
 
   await detectAI();
 
