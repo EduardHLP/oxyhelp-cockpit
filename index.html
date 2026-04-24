@@ -4082,124 +4082,110 @@ function spInit(){
 }
 
 // ═══════════════════════════════════════════════════════
-//  VOICE INPUT — OpenAI Whisper
+//  VOICE INPUT — Web Speech API (Chrome native, no API key needed)
 // ═══════════════════════════════════════════════════════
-const OPENAI_WHISPER_KEY = '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';
+let _speechRec = null;
+let _speechActive = false;
+let _speechFinal = '';
+let _speechInterim = '';
 
-let mediaRecorder = null;
-let audioChunks = [];
-let isRecording = false;
-
-async function toggleRecording(){
-  if(isRecording){
-    stopRecording();
+function toggleRecording(){
+  if(_speechActive) {
+    _stopSpeech();
   } else {
-    await startRecording();
+    _startSpeech();
   }
 }
 
-async function startRecording(){
-  try{
-    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
-    audioChunks = [];
+function _startSpeech(){
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRecognition){
+    botMsg('⚠ Voice input not supported in this browser. Use Chrome.');
+    return;
+  }
+  const inp = document.getElementById('chat-in');
+  const btn = document.getElementById('mic-btn');
 
-    // Pick best supported format
-    const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-      ? 'audio/webm;codecs=opus'
-      : MediaRecorder.isTypeSupported('audio/webm')
-      ? 'audio/webm'
-      : MediaRecorder.isTypeSupported('audio/mp4')
-      ? 'audio/mp4'
-      : 'audio/ogg';
+  _speechRec = new SpeechRecognition();
+  _speechRec.continuous = true;
+  _speechRec.interimResults = true;
+  _speechRec.lang = ''; // auto-detect language (handles Romanian + English)
+  _speechRec.maxAlternatives = 1;
 
-    mediaRecorder = new MediaRecorder(stream, {mimeType});
-    mediaRecorder.ondataavailable = e => { if(e.data.size > 0) audioChunks.push(e.data); };
-    mediaRecorder.onstop = async () => {
-      stream.getTracks().forEach(t => t.stop());
-      await transcribeAudio();
-    };
+  _speechFinal = inp.value || '';
+  _speechInterim = '';
 
-    mediaRecorder.start();
-    isRecording = true;
-    const btn = document.getElementById('mic-btn');
+  _speechRec.onstart = () => {
+    _speechActive = true;
     btn.classList.add('recording');
     btn.textContent = '⏹';
-    btn.title = 'Stop recording';
-  }catch(e){
-    console.error('Mic error:', e);
-    botMsg('⚠ Microphone access denied. Please allow microphone in browser settings.');
-  }
-}
+    btn.title = 'Oprește înregistrarea';
+  };
 
-function stopRecording(){
-  if(mediaRecorder && mediaRecorder.state !== 'inactive'){
-    mediaRecorder.stop();
-  }
-  isRecording = false;
-  const btn = document.getElementById('mic-btn');
-  btn.classList.remove('recording');
-  btn.classList.add('processing');
-  btn.textContent = '⏳';
-  btn.title = 'Processing…';
-}
-
-async function transcribeAudio(){
-  const btn = document.getElementById('mic-btn');
-  try{
-    const blob = new Blob(audioChunks, {type: mediaRecorder.mimeType});
-
-    // Need at least 0.1 seconds of audio
-    if(blob.size < 1000){
-      resetMicBtn();
-      return;
+  _speechRec.onresult = (e) => {
+    _speechInterim = '';
+    for(let i = e.resultIndex; i < e.results.length; i++){
+      const t = e.results[i][0].transcript;
+      if(e.results[i].isFinal){
+        _speechFinal += (_speechFinal && !_speechFinal.endsWith(' ') ? ' ' : '') + t;
+      } else {
+        _speechInterim += t;
+      }
     }
+    inp.value = _speechFinal + (_speechInterim ? ' ' + _speechInterim : '');
+    inp.style.height = 'auto';
+    inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
+    inp.scrollTop = inp.scrollHeight;
+  };
 
-    // Determine file extension for Whisper
-    const ext = mediaRecorder.mimeType.includes('mp4') ? 'mp4'
-      : mediaRecorder.mimeType.includes('ogg') ? 'ogg'
-      : 'webm';
-
-    const formData = new FormData();
-    formData.append('file', blob, `audio.${ext}`);
-    formData.append('model', 'whisper-1');
-    formData.append('language', 'ro'); // Romanian — change to 'en' or remove for auto-detect
-
-    const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-      method: 'POST',
-      headers: {'Authorization': `Bearer ${OPENAI_WHISPER_KEY}`},
-      body: formData
-    });
-
-    if(!res.ok){
-      const err = await res.json().catch(()=>({}));
-      throw new Error(err.error?.message || 'Whisper API error '+res.status);
+  _speechRec.onerror = (e) => {
+    if(e.error === 'no-speech') return; // normal, ignore
+    if(e.error === 'not-allowed'){
+      botMsg('⚠ Acces la microfon refuzat. Permite microfonul în setările browserului.');
+    } else {
+      console.warn('Speech error:', e.error);
     }
+    _resetMicBtn();
+  };
 
-    const data = await res.json();
-    const text = data.text?.trim();
-
-    if(text){
-      const inp = document.getElementById('chat-in');
-      // Append to existing text if any, otherwise set
-      inp.value = inp.value ? inp.value + ' ' + text : text;
+  _speechRec.onend = () => {
+    // Auto-restart if still active (handles browser timeout)
+    if(_speechActive){
+      try { _speechRec.start(); } catch(e){ _resetMicBtn(); }
+    } else {
+      inp.value = _speechFinal;
       inp.style.height = 'auto';
       inp.style.height = Math.min(inp.scrollHeight, 120) + 'px';
       inp.focus();
+      _resetMicBtn();
     }
-  }catch(e){
-    console.error('Whisper error:', e);
-    botMsg('⚠ Voice transcription failed: ' + e.message);
-  } finally {
-    resetMicBtn();
+  };
+
+  try {
+    _speechRec.start();
+  } catch(e) {
+    botMsg('⚠ Nu pot porni microfonul: ' + e.message);
+    _resetMicBtn();
   }
 }
 
-function resetMicBtn(){
+function _stopSpeech(){
+  _speechActive = false;
+  if(_speechRec){
+    try { _speechRec.stop(); } catch(e){}
+    _speechRec = null;
+  }
+  _resetMicBtn();
+}
+
+function _resetMicBtn(){
+  _speechActive = false;
   const btn = document.getElementById('mic-btn');
-  btn.classList.remove('recording', 'processing');
-  btn.textContent = '🎤';
-  btn.title = 'Voice input';
-  isRecording = false;
+  if(btn){
+    btn.classList.remove('recording', 'processing');
+    btn.textContent = '🎤';
+    btn.title = 'Voice input';
+  }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -4249,170 +4235,7 @@ async function initApp(){
         break;
       }
     }
-    // Detect external messages after text is pasted
-    setTimeout(() => {
-      const text = inp.value.trim();
-      if(text.length > 150 && isLikelyExternalMessage(text)) {
-        showExternalMsgBanner(text);
-      }
-    }, 60);
   });
-
-  // ═══════════════════════════════════════════════════════
-  //  EXTERNAL MESSAGE DETECTION & EXTRACTION
-  // ═══════════════════════════════════════════════════════
-
-  function isLikelyExternalMessage(text) {
-    const hasTimestamps = /\[\d{2}[.\/]\d{2}[.\/]\d{4}.*\]/.test(text);
-    const hasEmailFrom = /(^|\n)(from|de la|de:|subject:|subiect:)/im.test(text);
-    const hasGreeting = /^(dear |hi |hello |salut |bun[aă] |hei )/i.test(text.trim());
-    const hasMultipleSenders = (text.match(/\] [A-ZĂÂÎȘȚ][a-zăâîșț]+ [A-ZĂÂÎȘȚ][a-zăâîșț]+:/g)||[]).length > 1;
-    const lineCount = text.split('\n').filter(l=>l.trim()).length;
-    return hasTimestamps || hasEmailFrom || hasGreeting || hasMultipleSenders || lineCount > 8;
-  }
-
-  let _extBannerActive = false;
-  function showExternalMsgBanner(text) {
-    if(_extBannerActive) return;
-    _extBannerActive = true;
-    document.getElementById('ext-msg-banner')?.remove();
-    const banner = document.createElement('div');
-    banner.id = 'ext-msg-banner';
-    banner.style.cssText = 'position:absolute;bottom:calc(100% + 8px);left:0;right:0;background:var(--bg2);border:1.5px solid var(--brand);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.18);z-index:200;';
-    banner.innerHTML = `
-      <span style="font-size:18px;flex-shrink:0;">📋</span>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:12px;font-weight:700;color:var(--brand);margin-bottom:1px;">Mesaj extern detectat</div>
-        <div style="font-size:11px;color:var(--text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Extrag taskurile automat din acest mesaj?</div>
-      </div>
-      <button id="ext-extract-btn" style="background:var(--brand);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap;flex-shrink:0;">✦ Extrage taskuri</button>
-      <button id="ext-dismiss-btn" style="background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:20px;padding:0 4px;line-height:1;flex-shrink:0;">×</button>
-    `;
-    const bar = document.getElementById('input-bar');
-    bar.style.position = 'relative';
-    bar.appendChild(banner);
-
-    document.getElementById('ext-extract-btn').onclick = async () => {
-      banner.remove(); _extBannerActive = false;
-      const raw = inp.value.trim();
-      inp.value = ''; inp.style.height = 'auto';
-      await extractExternalMsg(raw);
-    };
-    document.getElementById('ext-dismiss-btn').onclick = () => {
-      banner.remove(); _extBannerActive = false;
-    };
-    setTimeout(() => { banner?.isConnected && banner.remove(); _extBannerActive = false; }, 9000);
-  }
-
-  async function extractExternalMsg(text) {
-    if(!aiEnabled) {
-      botMsg('⚠️ AI offline — activează AI pentru a extrage taskuri din mesaj.');
-      return;
-    }
-    showTyping();
-    const today = todayKey();
-    const systemPrompt = `You are a task extraction assistant. The user has pasted an external message (email, WhatsApp, client message, etc.).
-
-Your job:
-1. Read the message and identify what actions are required FROM THE USER'S PERSPECTIVE
-2. Create clean, concise, verb-first task titles in the same language as the message
-3. If a message is purely informational with no action needed, create a NOTE instead
-4. If multiple actions are needed, create multiple tasks
-5. Extract due dates if explicitly mentioned (ISO format YYYY-MM-DD)
-6. Assign priority: "high" if urgent/ASAP/overdue follow-up, "medium" otherwise
-
-Rules for task titles:
-- Short and action-oriented (5-10 words max)
-- Written from user's perspective ("Trimite...", "Clarifică...", "Răspunde...", "Aprobă...")
-- No raw email text, greetings, signatures, or disclaimers in titles
-- Preserve original language (Romanian stays Romanian, English stays English)
-
-Today's date: ${today}
-
-Return ONLY valid JSON, no prose:
-{
-  "items": [
-    {
-      "type": "task",
-      "title": "Verb-first short title",
-      "priority": "high|medium|low",
-      "dueDate": "YYYY-MM-DD or null",
-      "note": "optional short context for this task"
-    },
-    {
-      "type": "note", 
-      "title": "Short note title",
-      "content": "What to remember"
-    }
-  ],
-  "sourceLabel": "email|whatsapp|client message|colaborator message"
-}`;
-
-    try {
-      const k = getKey();
-      const headers = {'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
-      if(k) headers['x-api-key'] = k;
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
-        method:'POST',
-        headers,
-        body: JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:1500,
-          system: systemPrompt,
-          messages:[{role:'user',content:`Extract tasks from this message:\n\n${text}`}]
-        })
-      });
-      const data = await resp.json();
-      hideTyping();
-      const raw = data.content?.[0]?.text || '';
-      let parsed;
-      try { parsed = JSON.parse(raw.replace(/```json|```/g,'')); } catch { botMsg('❌ Nu am putut procesa mesajul.'); return; }
-
-      const items = parsed.items || [];
-      const label = parsed.sourceLabel || 'external message';
-      if(!items.length) { botMsg('ℹ️ Nu am găsit acțiuni clare în acest mesaj.'); return; }
-
-      // Show summary and create tasks
-      let summary = `📋 **Detectat din ${label}** — ${items.filter(i=>i.type==='task').length} task(uri), ${items.filter(i=>i.type==='note').length} notă(e):\n\n`;
-      const dk = todayKey();
-      for(const item of items) {
-        if(item.type === 'task') {
-          const id = 'T'+Date.now()+Math.random().toString(36).slice(2,6);
-          const task = {
-            id, text: item.title,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            completedAt: null, droppedAt: null,
-            status: 'todo',
-            waitingOn: '', blockedReason: '',
-            lastMeaningfulActivityAt: new Date().toISOString(),
-            category: item.priority === 'high' ? 'high' : 'medium',
-            carryForwardCount: 0, notes: [],
-            followUpAt: item.dueDate || null,
-            sourceLabel: label
-          };
-          // Add to today's tasks
-          let data = getLocalData();
-          if(!data.days[dk]) data.days[dk] = {tasks:[],notes:[]};
-          data.days[dk].tasks.push(task);
-          setLocalData(data);
-          await saveData();
-          summary += `✅ **${item.title}**`;
-          if(item.priority === 'high') summary += ' 🔴';
-          if(item.dueDate) summary += ` · due ${item.dueDate}`;
-          if(item.note) summary += `\n   _${item.note}_`;
-          summary += '\n';
-        } else if(item.type === 'note') {
-          summary += `📝 _Notă: ${item.title}${item.content ? ' — '+item.content : ''}_\n`;
-        }
-      }
-      botMsg(summary);
-      renderLeft();
-    } catch(e) {
-      hideTyping();
-      botMsg('❌ Eroare la procesarea mesajului: ' + e.message);
-    }
-  }
 
   await detectAI();
 
