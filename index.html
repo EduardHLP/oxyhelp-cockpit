@@ -926,7 +926,7 @@ main{display:-webkit-flex;display:flex;-webkit-flex:1;flex:1;overflow:hidden;min
       <button id="attach-btn" onclick="document.getElementById('attach-input').click()" title="Attach image">📎</button>
       <input type="file" id="attach-input" accept="image/*" style="display:none" onchange="handleAttach(event)">
       <textarea id="chat-in" rows="1" placeholder="Just lay it on me — we can do it together."></textarea>
-      <button id="mic-btn" onclick="toggleRecording()" title="Voice input">🎤</button>
+      <button id="mic-btn" onclick="toggleRecording()" title="Voice input">🎤</button><button id="mic-lang-btn" onclick="toggleSpeechLang()" title="Schimbă limba (RO/EN)" style="background:none;border:none;cursor:pointer;font-size:16px;padding:4px 6px;opacity:0.7;">🇷🇴</button>
       <button id="send-btn" onclick="handleSend()">↑</button>
     </div>
   </section>
@@ -4088,6 +4088,14 @@ let _speechRec = null;
 let _speechActive = false;
 let _speechFinal = '';
 let _speechInterim = '';
+let _speechLang = 'ro-RO'; // default Romanian
+
+function toggleSpeechLang(){
+  _speechLang = _speechLang === 'ro-RO' ? 'en-US' : 'ro-RO';
+  const btn = document.getElementById('mic-lang-btn');
+  if(btn) btn.textContent = _speechLang === 'ro-RO' ? '🇷🇴' : '🇬🇧';
+  if(_speechActive){ _stopSpeech(); setTimeout(_startSpeech, 200); }
+}
 
 function toggleRecording(){
   if(_speechActive) {
@@ -4109,7 +4117,7 @@ function _startSpeech(){
   _speechRec = new SpeechRecognition();
   _speechRec.continuous = true;
   _speechRec.interimResults = true;
-  _speechRec.lang = ''; // auto-detect language (handles Romanian + English)
+  _speechRec.lang = _speechLang; // ro-RO or en-US
   _speechRec.maxAlternatives = 1;
 
   _speechFinal = inp.value || '';
