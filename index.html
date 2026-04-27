@@ -1370,6 +1370,16 @@ function mergeData(local, remote){
     mergedNotes.sort((a,b) => a.time.localeCompare(b.time));
     merged.days[dk] = { tasks: Object.values(taskMap), notes: mergedNotes };
   }
+  // Preserve assignedToOthers — merge by taskId, keep most recent status
+  const localAO = local.assignedToOthers || {};
+  const remoteAO = remote.assignedToOthers || {};
+  const mergedAO = { ...localAO };
+  for(const [id, tracker] of Object.entries(remoteAO)){
+    if(!mergedAO[id] || new Date(tracker.createdAt) > new Date(mergedAO[id].createdAt)){
+      mergedAO[id] = tracker;
+    }
+  }
+  if(Object.keys(mergedAO).length) merged.assignedToOthers = mergedAO;
   return merged;
 }
 
