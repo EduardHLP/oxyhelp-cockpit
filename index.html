@@ -1228,7 +1228,7 @@ async function loadData(){
       const doc = await getUserDocRef().get();
       if(doc.exists && doc.data().data){
         D = JSON.parse(doc.data().data);
-        try{localStorage.setItem(STORE_KEY, JSON.stringify(D));}catch{}
+        try{localStorage.setItem(STORE_KEY+':'+fbUser.uid, JSON.stringify(D));}catch{}
 
         // Load chat from separate subcollection
         try{
@@ -1243,16 +1243,27 @@ async function loadData(){
         updateSyncDot('synced');
         return;
       }
+      // Firestore responded but doc is empty — user has no data yet, start fresh
+      // DO NOT fall back to localStorage (would load another user's data)
+      D = { days: {} };
       updateSyncDot('synced');
+      return;
     }catch(e){
       console.warn('Firestore load failed, falling back to local:', e);
       updateSyncDot('offline');
     }
   }
-  // Fallback: artifact storage
+  // Fallback: artifact storage (only reached if Firestore is unreachable)
   try{const r=await window.storage.get(STORE_KEY);if(r){D=JSON.parse(r.value);return;}}catch{}
-  // Fallback: localStorage
-  try{const s=localStorage.getItem(STORE_KEY);if(s){D=JSON.parse(s);}}catch{}
+  // Fallback: user-scoped localStorage
+  const userKey = STORE_KEY + (fbUser ? ':'+fbUser.uid : '');
+  try{const s=localStorage.getItem(userKey);if(s){D=JSON.parse(s);return;}}catch{}
+  // Legacy fallback: old shared key (migrate once, then stop)
+  try{const s=localStorage.getItem(STORE_KEY);if(s && fbUser){
+    D=JSON.parse(s);
+    // Don't persist — let Firestore be the source of truth on next save
+  }}catch{}
+  // Fallback: local chat
   // Fallback: local chat
   try{
     const todayChatKey = CHAT_KEY+':'+todayKey();
@@ -1263,8 +1274,9 @@ async function loadData(){
 
 async function saveData(){
   const s=JSON.stringify(D);
-  // Always save locally first (instant)
-  try{localStorage.setItem(STORE_KEY,s);}catch{}
+  // Always save locally first (instant) — use user-scoped key to prevent cross-user bleed
+  const userKey = STORE_KEY + (fbUser ? ':'+fbUser.uid : '');
+  try{localStorage.setItem(userKey,s);}catch{}
   try{await window.storage.set(STORE_KEY,s);}catch{}
 
   // Push ONLY tasks to Firestore — never mix with chat
