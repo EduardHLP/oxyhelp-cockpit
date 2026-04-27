@@ -570,7 +570,7 @@ main{display:-webkit-flex;display:flex;-webkit-flex:1;flex:1;overflow:hidden;min
 .qs-sep{height:1px;background:var(--border);margin:4px 0;}
 
 /* ── ASSIGN PERMISSIONS MODAL ── */
-.assign-perm-body{padding:20px 22px;overflow-y:auto;max-height:calc(85vh - 80px);}
+.assign-perm-body{padding:20px 22px;}
 .assign-perm-body p{font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:14px;}
 .assign-perm-user{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;}
 .assign-perm-user-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
@@ -1659,11 +1659,57 @@ function renderTasks(){
   Object.entries(delegateGroups).forEach(([name, dtasks]) => {
     html += renderSection(`👤 Added by ${name}`,'delegated-section', dtasks, dk);
   });
+  // Assigned by me section
+  html += renderAssignedByMeSection();
   scroll.innerHTML = html;
   // Update mobile strip after render
   renderMobileStrip();
   // Render notifications section
   renderNotifSection();
+}
+
+function renderAssignedByMeSection(){
+  if(!D || !D.assignedToOthers) return '';
+  const items = Object.values(D.assignedToOthers);
+  if(!items.length) return '';
+  // Group by assignee
+  const groups = {};
+  items.forEach(item => {
+    const key = item.assigneeEmail;
+    if(!groups[key]) groups[key] = [];
+    groups[key].push(item);
+  });
+  let html = '';
+  Object.entries(groups).forEach(([email, tasks]) => {
+    const pending = tasks.filter(t => t.status !== 'done' && t.status !== 'dropped');
+    const done = tasks.filter(t => t.status === 'done');
+    const name = email.split('@')[0];
+    const sectionLabel = `🎯 Assigned to ${name}`;
+    let taskHtml = '';
+    pending.forEach(t => {
+      taskHtml += `<div class="tc status-todo assigned-out-task" style="border-left:3px solid var(--purple);opacity:0.9;">
+        <div class="tc-top">
+          <span class="tc-text" style="font-size:12px;">${esc(t.title)}</span>
+          <span class="badge" style="background:var(--purple-light);color:var(--purple);border:1px solid rgba(139,92,246,.2);font-size:9px;">⏳ pending</span>
+        </div>
+      </div>`;
+    });
+    done.forEach(t => {
+      taskHtml += `<div class="tc status-done assigned-out-task" style="opacity:0.5;">
+        <div class="tc-top">
+          <span class="tc-text" style="font-size:12px;text-decoration:line-through;">${esc(t.title)}</span>
+          <span class="badge badge-done" style="font-size:9px;">✓ done</span>
+        </div>
+      </div>`;
+    });
+    if(taskHtml) {
+      html += `<div class="task-section">
+        <div class="task-section-label delegated-section">${sectionLabel} <span class="section-count">${tasks.length}</span></div>
+        ${taskHtml}
+      </div>`;
+    }
+  });
+  return html;
 }
 
 function renderDueTodaySection(tasks, dk){
@@ -3335,7 +3381,7 @@ async function renderAssignPermList(){
   try{
     const myRef = fbDb.collection('users').doc(fbUser.uid);
     const myDoc = await myRef.get();
-    const viewers = (myDoc.data()?.trustedViewers || []).map(e => e.trim().toLowerCase());
+    const viewers = myDoc.data()?.trustedViewers || [];
     const assignPerms = myDoc.data()?.assignPermissions || {};
 
     if(!viewers.length){
@@ -3485,6 +3531,25 @@ async function createAssignedTask(dk, title, assigneeUid, assigneeEmail){
       title,
       { type: 'assigned', dk }
     ).catch(()=>{});
+    // Save tracker in ASSIGNER's own doc so they can see what they assigned
+    const assignerRef = fbDb.collection('users').doc(fbUser.uid);
+    const assignerDoc = await assignerRef.get();
+    const assignerData = assignerDoc.exists ? JSON.parse(assignerDoc.data().data || '{"days":{}}') : {days:{}};
+    if(!assignerData.assignedToOthers) assignerData.assignedToOthers = {};
+    assignerData.assignedToOthers[task.id] = {
+      taskId: task.id,
+      title: title,
+      assigneeEmail: assigneeEmail,
+      assigneeUid: assigneeUid,
+      status: 'todo',
+      createdAt: now,
+      completedAt: null,
+      dk: dk
+    };
+    // Also update D directly so sidebar refreshes immediately
+    if(!D.assignedToOthers) D.assignedToOthers = {};
+    D.assignedToOthers[task.id] = assignerData.assignedToOthers[task.id];
+    await assignerRef.set({ data: JSON.stringify(assignerData), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, {merge:true});
     return task;
   }catch(e){ console.warn('createAssignedTask failed:', e); throw e; }
 }
@@ -3661,6 +3726,19 @@ async function notifyAssigner(task, dk){
     seen: false,
     createdAt: new Date().toISOString()
   });
+  // Also update assigner's own tracker
+  try {
+    const assignerRef = fbDb.collection('users').doc(assignerUid);
+    const assignerDoc = await assignerRef.get();
+    if(assignerDoc.exists) {
+      const ad = JSON.parse(assignerDoc.data().data || '{"days":{}}');
+      if(ad.assignedToOthers && ad.assignedToOthers[task.id]) {
+        ad.assignedToOthers[task.id].status = task.status || 'done';
+        ad.assignedToOthers[task.id].completedAt = task.completedAt;
+        await assignerRef.set({ data: JSON.stringify(ad), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, {merge:true});
+      }
+    }
+  } catch(e) { console.warn('tracker update failed:', e.message); }
   // Also send push to assigner
   const completedByName = task.completedByName || task.completedBy;
   sendPushToUser(assignerUid,
