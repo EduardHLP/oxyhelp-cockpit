@@ -1668,49 +1668,6 @@ function renderTasks(){
   renderNotifSection();
 }
 
-function renderAssignedByMeSection(){
-  if(!D || !D.assignedToOthers) return '';
-  const items = Object.values(D.assignedToOthers);
-  if(!items.length) return '';
-  // Group by assignee
-  const groups = {};
-  items.forEach(item => {
-    const key = item.assigneeEmail;
-    if(!groups[key]) groups[key] = [];
-    groups[key].push(item);
-  });
-  let html = '';
-  Object.entries(groups).forEach(([email, tasks]) => {
-    const pending = tasks.filter(t => t.status !== 'done' && t.status !== 'dropped');
-    const done = tasks.filter(t => t.status === 'done');
-    const name = email.split('@')[0];
-    const sectionLabel = `🎯 Assigned to ${name}`;
-    let taskHtml = '';
-    pending.forEach(t => {
-      taskHtml += `<div class="tc status-todo assigned-out-task" style="border-left:3px solid var(--purple);opacity:0.9;">
-        <div class="tc-top">
-          <span class="tc-text" style="font-size:12px;">${esc(t.title)}</span>
-          <span class="badge" style="background:var(--purple-light);color:var(--purple);border:1px solid rgba(139,92,246,.2);font-size:9px;">⏳ pending</span>
-        </div>
-      </div>`;
-    });
-    done.forEach(t => {
-      taskHtml += `<div class="tc status-done assigned-out-task" style="opacity:0.5;">
-        <div class="tc-top">
-          <span class="tc-text" style="font-size:12px;text-decoration:line-through;">${esc(t.title)}</span>
-          <span class="badge badge-done" style="font-size:9px;">✓ done</span>
-        </div>
-      </div>`;
-    });
-    if(taskHtml) {
-      html += `<div class="task-section">
-        <div class="task-section-label delegated-section">${sectionLabel} <span class="section-count">${tasks.length}</span></div>
-        ${taskHtml}
-      </div>`;
-    }
-  });
-  return html;
-}
 
 function renderAssignedByMeSection(){
   if(!D || !D.assignedToOthers) return '';
@@ -2663,6 +2620,7 @@ async function handleSend(){
     try{
       await createAssignedTask(dk, msg, selectedAssignee.uid, selectedAssignee.email);
       botMsg(`✓ Task assigned to ${selectedAssignee.name || selectedAssignee.email}`);
+      renderTasks();
     }catch(e){
       botMsg(`⚠ Could not assign task: ${e.message}`);
     }
@@ -3591,18 +3549,6 @@ async function createAssignedTask(dk, title, assigneeUid, assigneeEmail){
     if(!D.assignedToOthers) D.assignedToOthers = {};
     D.assignedToOthers[task.id] = assignerData.assignedToOthers[task.id];
     await assignerRef.set({ data: JSON.stringify(assignerData), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, {merge:true});
-    // Save tracker in assigner's own doc + D for immediate rendering
-    try {
-      const assignerRef = fbDb.collection('users').doc(fbUser.uid);
-      const assignerDoc = await assignerRef.get();
-      const assignerData = assignerDoc.exists ? JSON.parse(assignerDoc.data().data || '{"days":{}}') : {days:{}};
-      if(!assignerData.assignedToOthers) assignerData.assignedToOthers = {};
-      const tracker = { taskId: task.id, title, assigneeEmail, assigneeUid, status: 'todo', createdAt: now, completedAt: null, dk };
-      assignerData.assignedToOthers[task.id] = tracker;
-      if(!D.assignedToOthers) D.assignedToOthers = {};
-      D.assignedToOthers[task.id] = tracker;
-      await assignerRef.set({ data: JSON.stringify(assignerData), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, {merge:true});
-    } catch(e) { console.warn('tracker save failed:', e.message); }
     return task;
   }catch(e){ console.warn('createAssignedTask failed:', e); throw e; }
 }
