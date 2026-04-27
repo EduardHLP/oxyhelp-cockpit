@@ -4429,14 +4429,11 @@ async function init(){
       document.getElementById('auth-overlay').classList.add('hidden');
 
       if(!appInitialized){
-        // Check if this user has delegate access to someone else's account
-        const isDelegate = await checkDelegateAccess(user);
-        if(!isDelegate){
-          // Normal flow — own account
-          await uploadLocalIfNeeded();
-          await initApp();
-        }
-        // If delegate, showAccountSelector handles the flow
+        // Always load own account on login — Quick Switch handles delegate access on-demand
+        await uploadLocalIfNeeded();
+        await initApp();
+        // Load accessible accounts in background so Quick Switch is ready
+        loadAccessibleAccounts().catch(()=>{});
       } else {
         await loadData();
         renderTasks();
