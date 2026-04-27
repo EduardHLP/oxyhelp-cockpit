@@ -570,7 +570,7 @@ main{display:-webkit-flex;display:flex;-webkit-flex:1;flex:1;overflow:hidden;min
 .qs-sep{height:1px;background:var(--border);margin:4px 0;}
 
 /* ── ASSIGN PERMISSIONS MODAL ── */
-.assign-perm-body{padding:20px 22px;}
+.assign-perm-body{padding:20px 22px;overflow-y:auto;max-height:calc(85vh - 80px);}
 .assign-perm-body p{font-size:13px;color:var(--text-mid);line-height:1.6;margin-bottom:14px;}
 .assign-perm-user{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;}
 .assign-perm-user-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
@@ -3335,7 +3335,7 @@ async function renderAssignPermList(){
   try{
     const myRef = fbDb.collection('users').doc(fbUser.uid);
     const myDoc = await myRef.get();
-    const viewers = myDoc.data()?.trustedViewers || [];
+    const viewers = (myDoc.data()?.trustedViewers || []).map(e => e.trim().toLowerCase());
     const assignPerms = myDoc.data()?.assignPermissions || {};
 
     if(!viewers.length){
