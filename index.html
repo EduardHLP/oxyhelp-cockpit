@@ -83,7 +83,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{height:100%;height:100dvh;}
@@ -99,12 +99,12 @@ html{height:100%;height:100dvh;}
   --text:#1C1816;--text-mid:#6F6562;--text-faint:#B3A9A7;
   --shadow-sm:0 2px 8px rgba(28,24,22,.06);--shadow-md:0 4px 20px rgba(28,24,22,.09);--shadow-lg:0 8px 40px rgba(28,24,22,.13);
   --radius:14px;--radius-sm:8px;
-  --font:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;
+  --font:'Geist',sans-serif;--mono:'Geist Mono',monospace;
 }
 
 [data-theme="dark"]{
-  --bg:#1a1714;--bg2:#232019;--surface2:#2a2622;
-  --border:#35302c;--border2:#403b36;
+  --bg:#16111F;--bg2:#1e1829;--surface2:#251e30;
+  --border:#2e2640;--border2:#3a3250;
   --brand:#EF9C7F;--brand-light:#2a1f1a;--brand-mid:rgba(239,156,127,.15);--brand-dark:#CE95A1;
   --green:#00c875;--green-light:#0d2e1f;
   --amber:#f59e0b;--amber-light:#2a1f0a;
@@ -146,39 +146,60 @@ header{display:flex;align-items:center;padding:0 24px;height:56px;background:var
 .sp-connect:hover{background:#1DB954;color:#fff;}
 
 /* ── LAYOUT ── */
-main{display:-webkit-flex;display:flex;-webkit-flex:1;flex:1;overflow:hidden;min-height:0;}
+main{display:flex;flex:1;overflow:hidden;min-height:0;}
 
-/* ── LEFT PANEL ── */
-#left{width:320px;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;background:var(--bg2);transition:width .25s cubic-bezier(.4,0,.2,1);min-width:0;overflow:hidden;}
-#left.collapsed{width:0 !important;border-right:none;overflow:hidden;}
-#sidebar-resize{width:5px;background:transparent;cursor:col-resize;flex-shrink:0;border-right:1px solid var(--border);transition:background .15s;position:relative;}
-#sidebar-resize:hover,#sidebar-resize.dragging{background:var(--brand);border-right-color:var(--brand);}
-/* Claude.ai style toggle rail */
-#sidebar-rail{width:40px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:none;flex-direction:column;align-items:center;padding-top:10px;gap:4px;transition:all .15s;}
-#sidebar-rail.visible{display:flex;}
-#rail-toggle{width:28px;height:28px;border-radius:6px;border:none;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-faint);transition:all .15s;}
-#rail-toggle:hover{background:var(--brand-light);color:var(--brand);}
-#collapse-btn{background:none;border:none;color:var(--text-faint);width:22px;height:22px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;padding:0;}
-#collapse-btn:hover{color:var(--brand);background:var(--brand-light);}
+/* ── NAV RAIL (left) ── */
+#left{width:188px;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;background:var(--bg2);overflow:hidden;padding:10px 0 14px;transition:width .22s cubic-bezier(.4,0,.2,1);}
+#left.collapsed{width:44px !important;}
+#sidebar-resize{display:none !important;}
+#sidebar-rail{display:none !important;}
+#expand-sidebar-btn{display:none !important;}
+#collapse-btn{display:none !important;}
 
-.panel-head{padding:16px 18px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
-.panel-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.panel-title{font-size:10px;letter-spacing:1.5px;color:var(--text-faint);font-weight:700;text-transform:uppercase;}
+.nav-section{display:flex;flex-direction:column;gap:1px;padding:0 8px;margin-bottom:2px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--text-mid);font-weight:500;transition:all .12s;border:none;background:none;width:100%;text-align:left;font-family:var(--font);}
+.nav-item:hover{background:var(--brand-light);color:var(--text);}
+.nav-item.active{background:var(--brand-light);color:var(--text);font-weight:600;}
+.nav-item .nav-count{margin-left:auto;font-size:9.5px;font-family:var(--mono);background:var(--brand);color:#1C1816;border-radius:8px;padding:1px 5px;font-weight:700;min-width:16px;text-align:center;display:none;}
+.nav-item .nav-count.visible{display:block;}
+.nav-sep-label{font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--text-faint);font-family:var(--mono);padding:10px 18px 4px;text-transform:uppercase;}
+.nav-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;display:inline-block;}
+.nav-bottom{margin-top:auto;padding:10px 8px 0;display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--border);}
+.nav-bottom-btn{display:flex;align-items:center;gap:8px;width:100%;padding:7px 10px;border-radius:8px;font-size:12px;font-weight:500;color:var(--text-mid);background:none;border:none;cursor:pointer;transition:all .12s;text-align:left;font-family:var(--font);}
+.nav-bottom-btn:hover{background:var(--brand-light);color:var(--brand);}
+
+/* ── CENTER MAIN ── */
+#center-main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;background:var(--bg);}
+
+#center-header{display:flex;align-items:center;padding:12px 24px;border-bottom:1px solid var(--border);flex-shrink:0;gap:12px;background:var(--bg);}
+#greeting-text{font-size:17px;font-weight:600;color:var(--text);flex:1;letter-spacing:-.3px;}
+#greeting-meta{display:flex;align-items:center;gap:4px;}
+.nav-day-btn{background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:14px;padding:2px 5px;border-radius:6px;transition:all .12s;line-height:1;}
+.nav-day-btn:hover{color:var(--brand);background:var(--brand-light);}
 .date-badge{background:var(--brand-light);color:var(--brand);font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;}
+#date-picker-wrap{padding:8px 24px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0;}
 
 /* progress ring */
-.ring-wrap{display:flex;align-items:center;gap:14px;background:var(--bg);border-radius:var(--radius);padding:12px 14px;}
-.ring-svg{width:52px;height:52px;flex-shrink:0;}
+.ring-wrap{display:flex;align-items:center;gap:10px;background:var(--bg2);border-radius:10px;padding:8px 12px;}
+.ring-svg{width:44px;height:44px;flex-shrink:0;}
 .ring-bg{fill:none;stroke:var(--border);stroke-width:4;}
 .ring-fill{fill:none;stroke:url(#rg);stroke-width:4;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);}
 .ring-pct,.ring-lbl{text-anchor:middle;dominant-baseline:middle;font-family:'Inter',sans-serif;}
-.ring-pct{fill:var(--text);font-size:12px;font-weight:700;}
-.ring-lbl{fill:var(--text-faint);font-size:6.5px;letter-spacing:1px;}
-.ring-stats{font-family:var(--mono);font-size:11.5px;color:var(--text-mid);line-height:1.9;}
+.ring-pct{fill:var(--text);font-size:11px;font-weight:700;}
+.ring-lbl{fill:var(--text-faint);font-size:6px;letter-spacing:1px;}
+.ring-stats{font-family:var(--mono);font-size:10.5px;color:var(--text-mid);line-height:1.9;}
 .ring-stats b{color:var(--text);font-weight:600;}
 
-/* task sections */
-#task-scroll{flex:1;overflow-y:auto;padding:8px 10px 16px;}
+/* chat messages */
+#chat-msgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 24px;display:flex;flex-direction:column;gap:10px;min-height:0;}
+
+/* task board bar */
+#task-board-bar{display:flex;align-items:center;gap:10px;padding:9px 24px 5px;border-top:1px solid var(--border);background:var(--bg);flex-shrink:0;}
+.tb-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-faint);font-family:var(--mono);}
+.tb-meta{font-size:10px;color:var(--text-faint);font-family:var(--mono);}
+
+/* task scroll in center */
+#task-scroll{overflow-y:auto;padding:6px 14px 10px;max-height:30vh;flex-shrink:0;}
 .task-section{margin-bottom:8px;}
 .task-section-label{font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-faint);padding:8px 6px 4px;display:flex;align-items:center;gap:6px;}
 .task-section-label.overdue{color:var(--red);}
@@ -238,9 +259,8 @@ main{display:-webkit-flex;display:flex;-webkit-flex:1;flex:1;overflow:hidden;min
 .empty-state{padding:28px 16px;text-align:center;font-size:13px;color:var(--text-faint);line-height:1.8;}
 .empty-state div{font-size:28px;margin-bottom:8px;}
 
-/* ── CHAT PANEL ── */
-#right{-webkit-flex:1;flex:1;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;overflow:hidden;background:var(--bg);min-height:0;}
-#chat-msgs{-webkit-flex:1;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:22px 26px;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;gap:12px;min-height:0;}
+/* ── CHAT PANEL (center-main) ── */
+#right{display:none;} /* legacy — replaced by #center-main */
 .msg{max-width:78%;animation:msgIn .2s ease;}
 @keyframes msgIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 .msg.user{align-self:flex-end;}
@@ -515,12 +535,12 @@ main{display:-webkit-flex;display:flex;-webkit-flex:1;flex:1;overflow:hidden;min
   box-shadow:0 24px 64px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.15);
 }
 .auth-card .logo-auth{margin-bottom:8px;opacity:1;}
-.auth-card h2{font-size:22px;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-.4px;font-family:'Plus Jakarta Sans',sans-serif;}
+.auth-card h2{font-size:22px;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-.4px;font-family:'Geist',sans-serif;}
 .auth-card p{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:28px;}
-.btn-google{display:inline-flex;align-items:center;gap:10px;background:#fff;border:none;color:#1C1816;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;padding:13px 32px;border-radius:40px;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(0,0,0,0.25);width:100%;justify-content:center;}
+.btn-google{display:inline-flex;align-items:center;gap:10px;background:#fff;border:none;color:#1C1816;font-family:'Geist',sans-serif;font-size:14px;font-weight:600;padding:13px 32px;border-radius:40px;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(0,0,0,0.25);width:100%;justify-content:center;}
 .btn-google:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.35);}
 .btn-google svg{width:20px;height:20px;flex-shrink:0;}
-.auth-skip{margin-top:14px;font-size:12px;color:rgba(255,255,255,0.4);background:none;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:underline;}
+.auth-skip{margin-top:14px;font-size:12px;color:rgba(255,255,255,0.4);background:none;border:none;cursor:pointer;font-family:'Geist',sans-serif;text-decoration:underline;}
 .auth-skip:hover{color:rgba(255,255,255,0.7);}
 
 /* ── USER AVATAR / SYNC ── */
@@ -616,6 +636,28 @@ main{display:-webkit-flex;display:flex;-webkit-flex:1;flex:1;overflow:hidden;min
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+/* ── RIGHT RAIL ── */
+#right-rail{width:256px;flex-shrink:0;border-left:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;}
+.rail-section{padding:14px 16px;border-bottom:1px solid var(--border);}
+.rail-section-title{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-faint);font-family:var(--mono);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.live-dot{font-size:8px;background:var(--green);color:#fff;border-radius:4px;padding:1px 5px;font-weight:700;letter-spacing:.5px;}
+.rail-empty{font-size:11.5px;color:var(--text-faint);text-align:center;padding:10px 0;font-family:var(--mono);}
+.weekly-stats{display:flex;gap:8px;}
+.weekly-stat{display:flex;flex-direction:column;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;flex:1;gap:1px;}
+.weekly-stat b{font-size:18px;font-weight:700;color:var(--text);font-family:var(--mono);}
+.weekly-stat span{font-size:8.5px;color:var(--text-faint);font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;}
+/* Spotify in right rail */
+#right-rail #spotify-widget{display:flex !important;flex-direction:column;gap:6px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;max-width:100%;cursor:pointer;transition:all .2s;}
+#right-rail #spotify-widget:hover{border-color:#1DB954;}
+#right-rail .sp-art{width:32px;height:32px;border-radius:6px;background:var(--border);object-fit:cover;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+#right-rail .sp-info{min-width:0;flex:1;}
+#right-rail .sp-track{font-size:11.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#right-rail .sp-artist{font-size:10.5px;color:var(--text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#right-rail .sp-row{display:flex;align-items:center;gap:8px;}
+#right-rail .sp-connect{background:none;border:1.5px solid #1DB954;color:#1DB954;font-size:10px;font-weight:600;padding:3px 8px;border-radius:10px;cursor:pointer;font-family:var(--font);white-space:nowrap;}
+#right-rail .sp-connect:hover{background:#1DB954;color:#fff;}
+
+@media(max-width:900px){#left{width:0 !important;min-width:0 !important;border:none;}#right-rail{display:none;}}
 </style>
 </head>
 <body>
@@ -702,8 +744,8 @@ main{display:-webkit-flex;display:flex;-webkit-flex:1;flex:1;overflow:hidden;min
   <div id="dt">—</div>
   <div class="hdr-right">
     <span class="ai-badge off" id="ai-badge">AI OFF</span>
-    <!-- Spotify Widget -->
-    <div id="spotify-widget" onclick="handleSpotifyClick()">
+    <!-- Spotify Widget — moved to right rail -->
+    <div id="spotify-widget" onclick="handleSpotifyClick()" style="display:none!important;">
       <div class="sp-art placeholder" id="sp-art">♫</div>
       <div class="sp-info">
         <div class="sp-track" id="sp-track">Not playing</div>
@@ -854,32 +896,45 @@ main{display:-webkit-flex;display:flex;-webkit-flex:1;flex:1;overflow:hidden;min
 </div>
 
 <main>
+  <!-- ── LEFT NAV RAIL ── -->
   <aside id="left">
-    <!-- Expand button — shown only when collapsed -->
-    <button id="expand-sidebar-btn" onclick="expandSidebar()" title="Arată sidebar"
-      style="display:none;width:100%;flex:1;background:none;border:none;cursor:pointer;
-             color:var(--text-faint);font-size:18px;align-items:center;justify-content:center;
-             transition:all .15s;flex-shrink:0;padding:0;">›</button>
-    <div class="panel-head">
-      <div class="panel-title-row">
-        <span class="panel-title">Taskuri</span>
-        <div style="display:flex;align-items:center;gap:4px;">
-          <button onclick="navigateDay(-1)" style="background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:14px;padding:2px 5px;border-radius:6px;line-height:1;transition:all .15s;" title="Ziua precedentă">‹</button>
-          <span class="date-badge" id="panel-date" onclick="toggleDatePicker()" style="cursor:pointer" title="Schimbă ziua">—</span>
-          <button onclick="navigateDay(1)" style="background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:14px;padding:2px 5px;border-radius:6px;line-height:1;transition:all .15s;" title="Ziua următoare">›</button>
-          <button id="collapse-btn" onclick="collapseSidebar()" title="Ascunde sidebar">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.2"/>
-              <line x1="5" y1="1" x2="5" y2="15" stroke="currentColor" stroke-width="1.2"/>
-              <path d="M8 10L5.5 8 8 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-      <div id="date-picker-wrap" style="display:none;margin-bottom:10px;">
-        <input type="date" id="view-date" onchange="changeViewDate(this.value)"
-          style="width:100%;background:var(--bg);border:1.5px solid var(--border);color:var(--text);font-family:var(--mono);font-size:12px;padding:7px 10px;outline:none;border-radius:var(--radius-sm);">
-        <div id="days-with-data" style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;"></div>
+    <div class="nav-section" style="margin-bottom:12px;">
+      <button class="nav-item active" onclick="jumpToToday ? jumpToToday() : null">
+        <span>◆</span><span>Today</span>
+        <span class="nav-count" id="nav-today-count"></span>
+      </button>
+      <button class="nav-item" onclick="qcmd && qcmd('weekly report')">
+        <span>⊟</span><span>Week</span>
+      </button>
+      <button class="nav-item" onclick="qcmd && qcmd('what\\'s pending')">
+        <span>◻</span><span>Inbox</span>
+      </button>
+      <button class="nav-item" onclick="openReports && openReports()">
+        <span>↗</span><span>Reports</span>
+      </button>
+    </div>
+    <div class="nav-sep-label">Spaces</div>
+    <div class="nav-section">
+      <button class="nav-item">
+        <span class="nav-dot" style="background:var(--brand)"></span>
+        <span>My tasks</span>
+      </button>
+    </div>
+    <div class="nav-bottom">
+      <button class="nav-bottom-btn" onclick="openEOD && openEOD()">☀ Day End</button>
+      <button class="nav-bottom-btn" onclick="openTeamBrief && openTeamBrief()" id="nav-team-btn" style="display:none">📊 Team</button>
+    </div>
+  </aside>
+
+  <!-- ── CENTER MAIN ── -->
+  <section id="center-main">
+    <!-- Greeting + ring + date nav -->
+    <div id="center-header">
+      <span id="greeting-text">Good morning.</span>
+      <div id="greeting-meta">
+        <button onclick="navigateDay(-1)" class="nav-day-btn">‹</button>
+        <span class="date-badge" id="panel-date" onclick="toggleDatePicker()" style="cursor:pointer">—</span>
+        <button onclick="navigateDay(1)" class="nav-day-btn">›</button>
       </div>
       <div class="ring-wrap">
         <svg class="ring-svg" viewBox="0 0 52 52">
@@ -892,16 +947,19 @@ main{display:-webkit-flex;display:flex;-webkit-flex:1;flex:1;overflow:hidden;min
           <text x="26" y="23"><tspan class="ring-pct" id="ring-pct" x="26">0%</tspan></text>
           <text x="26" y="34"><tspan class="ring-lbl" x="26">DONE</tspan></text>
         </svg>
-        <div class="ring-stats" id="ring-stats"><div><b>0</b> done</div><div><b>0</b> pending</div></div>
+        <div class="ring-stats" id="ring-stats"><div><b>0</b> done</div><div><b>0</b> in lucru</div></div>
       </div>
     </div>
-    <div id="task-scroll"></div>
-    <div id="notif-section-container"></div>
-  </aside>
-  <div id="sidebar-resize"></div>
+    <div id="date-picker-wrap" style="display:none;">
+      <input type="date" id="view-date" onchange="changeViewDate(this.value)"
+        style="width:100%;background:var(--bg);border:1.5px solid var(--border);color:var(--text);font-family:var(--mono);font-size:12px;padding:7px 10px;outline:none;border-radius:var(--radius-sm);">
+      <div id="days-with-data" style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;"></div>
+    </div>
 
-  <section id="right">
+    <!-- Chat messages -->
     <div id="chat-msgs"></div>
+
+    <!-- Quick action chips -->
     <div id="chips">
       <button class="chip" onclick="qcmd('what\\'s pending')">📋 Pending</button>
       <button class="chip" onclick="qcmd('daily report')">📄 Daily Report</button>
@@ -912,6 +970,8 @@ main{display:-webkit-flex;display:flex;-webkit-flex:1;flex:1;overflow:hidden;min
       <button class="chip" onclick="openImportModal()">📥 Import</button>
       <button class="chip" id="chip-ai" style="display:none" onclick="openApiKey()">⚙ AI Setup</button>
     </div>
+
+    <!-- Attachment preview + assignee row + input -->
     <div id="attach-preview">
       <img id="attach-thumb" src="" alt=""/>
       <button id="attach-remove" onclick="clearAttachment()" title="Remove">✕</button>
@@ -926,10 +986,52 @@ main{display:-webkit-flex;display:flex;-webkit-flex:1;flex:1;overflow:hidden;min
       <button id="attach-btn" onclick="document.getElementById('attach-input').click()" title="Attach image">📎</button>
       <input type="file" id="attach-input" accept="image/*" style="display:none" onchange="handleAttach(event)">
       <textarea id="chat-in" rows="1" placeholder="Just lay it on me — we can do it together."></textarea>
-      <button id="mic-btn" onclick="toggleRecording()" title="Voice input">🎤</button><button id="mic-lang-btn" onclick="toggleSpeechLang()" title="Schimbă limba (RO/EN)" style="background:none;border:none;cursor:pointer;font-size:16px;padding:4px 6px;opacity:0.7;">🇷🇴</button>
+      <button id="mic-btn" onclick="toggleRecording()" title="Voice input">🎤</button>
+      <button id="mic-lang-btn" onclick="toggleSpeechLang()" title="Schimbă limba (RO/EN)" style="background:none;border:none;cursor:pointer;font-size:16px;padding:4px 6px;opacity:0.7;">🇷🇴</button>
       <button id="send-btn" onclick="handleSend()">↑</button>
     </div>
+
+    <!-- Task list below chat -->
+    <div id="task-board-bar">
+      <span class="tb-label">All today</span>
+      <span class="tb-meta" id="tb-meta"></span>
+    </div>
+    <div id="task-scroll"></div>
+    <div id="notif-section-container"></div>
   </section>
+
+  <!-- ── RIGHT RAIL ── -->
+  <aside id="right-rail">
+    <!-- Spotify -->
+    <div class="rail-section">
+      <div class="rail-section-title">Spotify</div>
+      <div id="spotify-rail" onclick="handleSpotifyClick()" style="cursor:pointer;">
+        <div style="display:flex;align-items:center;gap:8px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;transition:all .2s;" id="sp-rail-card">
+          <div class="sp-art placeholder" id="sp-art-rail" style="width:32px;height:32px;border-radius:6px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">♫</div>
+          <div style="min-width:0;flex:1;">
+            <div id="sp-track-rail" style="font-size:11.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Not playing</div>
+            <div id="sp-artist-rail" style="font-size:10.5px;color:var(--text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Spotify</div>
+          </div>
+          <button class="sp-connect" id="sp-rail-btn" onclick="event.stopPropagation();spotifyConnect()" style="background:none;border:1.5px solid #1DB954;color:#1DB954;font-size:10px;font-weight:600;padding:3px 8px;border-radius:10px;cursor:pointer;font-family:var(--font);white-space:nowrap;">♫ Connect</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live activity -->
+    <div class="rail-section">
+      <div class="rail-section-title">Activity <span class="live-dot">LIVE</span></div>
+      <div id="rail-activity"><div class="rail-empty">No recent activity</div></div>
+    </div>
+
+    <!-- Weekly summary -->
+    <div class="rail-section">
+      <div class="rail-section-title">This week</div>
+      <div class="weekly-stats">
+        <div class="weekly-stat"><b id="ws-done">—</b><span>done</span></div>
+        <div class="weekly-stat"><b id="ws-created">—</b><span>created</span></div>
+      </div>
+    </div>
+  </aside>
 </main>
 
 <!-- REPORTS MODAL -->
@@ -1642,6 +1744,16 @@ function renderTasks(){
   document.getElementById('ring-pct').textContent = pct+'%';
   const pending = tasks.filter(t=>t.status!=='done'&&t.status!=='dropped').length;
   document.getElementById('ring-stats').innerHTML = `<div><b>${done}</b> finalizate</div><div><b>${pending}</b> în lucru</div>`;
+
+  // Update task board bar meta
+  const tbMeta = document.getElementById('tb-meta');
+  if(tbMeta) tbMeta.textContent = total ? `${total} task${total!==1?'s':''}` : '';
+
+  // Update greeting
+  updateGreeting();
+
+  // Update weekly rail stats
+  updateWeeklyRail();
 
   // Due on this date from other days — show for any viewed date
   const dueToday = getDueOnDateFromOtherDays(dk);
@@ -4152,6 +4264,7 @@ function updateSpotifyUI(data){
     artEl.outerHTML = `<img class="sp-art" id="sp-art" src="${imgUrl}" alt="album art">`;
   }
   widget.classList.add('active');
+  syncSpotifyRail();
 }
 
 function updateSpotifyButton(connected){
@@ -4162,6 +4275,7 @@ function updateSpotifyButton(connected){
     btn.style.display = '';
     document.getElementById('spotify-widget').classList.remove('active');
   }
+  syncSpotifyRail();
 }
 
 function spStartPolling(){
@@ -4323,6 +4437,59 @@ function updateDT(){
 // ═══════════════════════════════════════════════════════
 let appInitialized = false;
 
+function updateGreeting(){
+  const el = document.getElementById('greeting-text');
+  if(!el) return;
+  const h = new Date().getHours();
+  const tod = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+  const name = (fbUser && fbUser.displayName) ? fbUser.displayName.split(' ')[0] : '';
+  el.textContent = `Good ${tod}${name ? ', '+name : ''}.`;
+}
+
+function updateWeeklyRail(){
+  try{
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0=Sun
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+    let weekDone = 0, weekCreated = 0;
+    Object.entries(D.days||{}).forEach(([dk, day])=>{
+      const d = new Date(dk+'T12:00:00');
+      if(d >= monday && d <= now){
+        const tasks = day.tasks || [];
+        weekDone += tasks.filter(t=>t.status==='done').length;
+        weekCreated += tasks.length;
+      }
+    });
+    const wsDone = document.getElementById('ws-done');
+    const wsCreated = document.getElementById('ws-created');
+    if(wsDone) wsDone.textContent = weekDone;
+    if(wsCreated) wsCreated.textContent = weekCreated;
+  }catch(e){}
+}
+
+function syncSpotifyRail(){
+  // Mirror spotify state to right rail display
+  const track = document.getElementById('sp-track');
+  const artist = document.getElementById('sp-artist');
+  const art = document.getElementById('sp-art');
+  const trackR = document.getElementById('sp-track-rail');
+  const artistR = document.getElementById('sp-artist-rail');
+  const artR = document.getElementById('sp-art-rail');
+  const btnR = document.getElementById('sp-rail-btn');
+  if(trackR && track) trackR.textContent = track.textContent;
+  if(artistR && artist) artistR.textContent = artist.textContent;
+  if(artR && art){
+    if(art.tagName === 'IMG' && art.src){
+      artR.innerHTML = `<img src="${art.src}" style="width:32px;height:32px;border-radius:6px;object-fit:cover;">`;
+    } else {
+      artR.textContent = '♫';
+    }
+  }
+  const connected = document.getElementById('spotify-widget')?.classList.contains('active');
+  if(btnR) btnR.style.display = connected ? 'none' : 'block';
+}
+
 async function initApp(){
   if(appInitialized) return;
   appInitialized = true;
@@ -4468,8 +4635,7 @@ async function init(){
 // ── DARK MODE ──────────────────────────────────────────
 function initDarkMode(){
   const saved = localStorage.getItem('daylog:theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const isDark = saved ? saved === 'dark' : prefersDark;
+  const isDark = saved ? saved === 'dark' : true; // dark by default
   if(isDark) document.documentElement.setAttribute('data-theme','dark');
   updateDarkModeBtn();
 }
