@@ -862,6 +862,14 @@ header,main{position:relative;z-index:1;}
 @media(max-width:900px){
   #viewing-as-banner{padding:7px 14px;font-size:10px;}
 }
+
+/* ── GLOBAL FIXES ── */
+/* Old mobile topbar replaced by .hdr-mobile-l/c/r inside <header> */
+#mobile-topbar{display:none!important;}
+/* Voice bar hidden globally; shown only when #input-bar.is-listening */
+.voice-listening-bar{display:none;}
+/* slideUp keyframe must live outside @media for cross-browser reliability */
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
 </style>
 </head>
 <body>
