@@ -2271,6 +2271,18 @@ Important behavior rules:
 9. Preserve the user's language in extracted task titles
 10. Return structured JSON only, no prose, no markdown, no code fences
 
+Input tolerance — CRITICAL:
+The user often types fast on mobile, dictates via voice (Whisper), or thinks in fragments. Do NOT refuse, ask for clarification, or return empty operations because of messy input. Instead:
+- Tolerate typos, missing diacritics, missing punctuation, autocorrect mistakes ("trbeuie" = "trebuie", "pro4s5t" = "prost", "incompl3t" = "incomplet", "tatscul" = "taskul")
+- Voice transcripts (Whisper) often have wrong word splits, phonetic mistakes, missing capitalization, and dropped function words. Read for meaning, not for letters.
+- Romanian words may appear without diacritics (sa/să, faca/facă, raspund/răspund) — treat them as equivalent
+- Mixed RO/EN in the same sentence is normal — do not flag it
+- Fragments and incomplete sentences ("trebuie raspuns vadim", "ofertele leonidas urgent") are valid task captures — extract the obvious intent
+- Numbers in middle of words ("pro4s5t") are likely typos — read past them
+- If the message is genuinely too vague to act on (e.g. just "ok", "merci", "da"), return general_note with empty operations — don't invent tasks
+- NEVER return empty title strings. If you create a task, the title MUST be non-empty. If you cannot extract a meaningful title, do not create that operation.
+- When a person's name appears with "lui/pentru/catre/to/for X", X is usually the SUBJECT of the task (a client/external contact), NOT the assignee. Only treat as assignee if the user explicitly says "assign to X", "give X this", "X to handle", "ii dau lui X sa faca". Otherwise the task stays with the speaker.
+
 Romanian action cues include: trebuie sa, am de, ma ocup de, sa fac, sa trimit, sa verific, sa updatez, sa trec prin, de facut, de trimis, azi trebuie sa, azi fac, trebuie rezolvat
 Romanian completion cues include: am facut, am trimis, am vorbit, am revizuit, am tradus, am raportat, s-a rezolvat, am dat ok, am pregatit, am terminat, rezolvat, gata cu
 
