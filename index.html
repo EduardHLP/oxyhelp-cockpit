@@ -4638,8 +4638,8 @@ function renderStatusBoard(){
     prod:'#EF9C7F', cert:'#888', ops:'#888'
   };
   const inferTag = (t) => {
-    const tt = (t.title||'').toLowerCase();
-    if(tt.includes('install') || tt.includes('chamber') || tt.includes('proforma') || tt.includes('invoice')) return 'install';
+    const tt = (t.text||t.title||'').toLowerCase();
+    if(tt.includes('install') || tt.includes('chamber') || tt.includes('proforma') || tt.includes('invoice') || tt.includes('monoplace')) return 'install';
     if(tt.includes('cert') || tt.includes('renewal') || tt.includes('docs')) return 'cert';
     if(tt.includes('athlete') || tt.includes('partner') || tt.includes('onboard')) return 'athlete';
     if(tt.includes('prod') || tt.includes('calibrat') || tt.includes('sensor') || tt.includes('unit')) return 'prod';
@@ -4659,7 +4659,7 @@ function renderStatusBoard(){
     return `<div class="board-card ${isDone?'is-done':''}" onclick="openTaskInChat('${t.id}')">
       <div class="bc-top">
         <div class="bc-check ${isDone?'checked':''}" onclick="event.stopPropagation();toggleTaskDone('${t.id}')">${isDone?'✓':''}</div>
-        <div class="bc-title">${esc(t.title)}</div>
+        <div class="bc-title">${esc(t.text||t.title||'(untitled)')}</div>
       </div>
       <div class="bc-meta">
         <span class="bc-tag" style="background:${tagColor}1a;color:${tagColor};"><span class="bc-tag-dot" style="background:${tagColor}"></span>${tag.toUpperCase()}</span>
