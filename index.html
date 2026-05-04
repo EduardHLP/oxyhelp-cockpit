@@ -870,6 +870,55 @@ header,main{position:relative;z-index:1;}
 .voice-listening-bar{display:none;}
 /* slideUp keyframe must live outside @media for cross-browser reliability */
 @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+
+/* ════════════════════════════════════════════════════════════════
+   MOBILE MASTER OVERRIDES — placed last to win CSS cascade order.
+   The earlier @media(max-width:768px) block at line ~430 was being
+   overridden by desktop rules defined AFTER it (e.g. #status-board
+   at line ~806). These !important rules ensure mobile wins.
+   ════════════════════════════════════════════════════════════════ */
+@media(max-width:768px){
+  /* ── Hide all desktop header chrome ── */
+  header > .logo,
+  header > .header-sep,
+  header > #dt,
+  header > .hdr-right{display:none!important;}
+
+  /* ── Hide home-screen chrome that belongs in drawer/sheet ── */
+  #chips{display:none!important;}
+  #assignee-row{display:none!important;}
+  #task-board-bar{display:none!important;}
+  #status-board{display:none!important;}
+  #mobile-task-strip{display:none!important;}
+  #hero-day-nav{display:none!important;}
+
+  /* ── Hide the rainbow language flag (not in OxyHelp palette) ── */
+  #mic-lang-btn{display:none!important;}
+
+  /* ── Mobile header: date in mono caps, no Cockpit pill ── */
+  .hdr-mobile-c{
+    font-family:var(--mono)!important;
+    font-weight:500!important;
+    font-size:10.5px!important;
+    letter-spacing:1.4px!important;
+    color:var(--text-faint)!important;
+    text-transform:uppercase;
+  }
+
+  /* ── Hero copy refinements ── */
+  #hero-subtitle{color:var(--text-mid);font-weight:400;}
+  #hero-stats{color:var(--text-mid);}
+  .stat-pair.urgent b{color:#FE3B2B;}
+
+  /* ── Sticky input bar (belt-and-suspenders) ── */
+  #input-bar{
+    position:sticky!important;
+    bottom:0!important;
+    z-index:30!important;
+    background:var(--bg2)!important;
+    border-top:1px solid var(--border)!important;
+  }
+}
 </style>
 </head>
 <body>
@@ -882,11 +931,7 @@ header,main{position:relative;z-index:1;}
     </button>
   </div>
   <div class="hdr-mobile-c">
-    <svg class="brand-mark" viewBox="0 0 352 349" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="303" cy="300" r="40" fill="none" stroke="#EF9C7F" stroke-width="20"/>
-      <circle cx="143" cy="143" r="115" fill="none" stroke="#EF9C7F" stroke-width="40"/>
-    </svg>
-    <span>Cockpit</span>
+    <span id="hdr-mobile-date">—</span>
   </div>
   <div class="hdr-mobile-r">
     <button class="hdr-icon-btn" onclick="openMobileSheet()" aria-label="Tasks">
@@ -1268,7 +1313,7 @@ header,main{position:relative;z-index:1;}
     <div id="input-bar">
       <button id="attach-btn" onclick="document.getElementById('attach-input').click()" title="Attach image">📎</button>
       <input type="file" id="attach-input" accept="image/*" style="display:none" onchange="handleAttach(event)">
-      <textarea id="chat-in" rows="1" placeholder="Just lay it on me — we can do it together."></textarea>
+      <textarea id="chat-in" rows="1" placeholder="Ask, assign, schedule…"></textarea>
       <div class="voice-listening-bar">
         <div class="voice-waves"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
         <span class="voice-listening-text">Listening</span>
@@ -4899,9 +4944,17 @@ function updateGreeting(){
   const total = (D.days[viewDate]?.tasks || []).length;
   const pending = (D.days[viewDate]?.tasks || []).filter(t=>t.status!=='done'&&t.status!=='dropped').length;
   if(heroSubtitle){
+    const numWords = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen','Twenty'];
+    const wordOf = (n) => numWords[n] || String(n);
     if(!total) heroSubtitle.textContent = 'A clear slate. What\'s first?';
     else if(pending === 0) heroSubtitle.textContent = 'Everything is done. Take a breath.';
-    else heroSubtitle.textContent = `${pending} ${pending===1?'thing':'things'} to clear, ${total-pending} done.`;
+    else heroSubtitle.textContent = `${wordOf(pending)} ${pending===1?'breath':'breaths'} to clear.`;
+  }
+  const hdrDate = document.getElementById('hdr-mobile-date');
+  if(hdrDate){
+    const day = now.toLocaleDateString('en',{weekday:'short'}).toUpperCase();
+    const date = now.toLocaleDateString('en',{day:'numeric',month:'short'}).toUpperCase();
+    hdrDate.textContent = `${day} · ${date}`;
   }
 }
 
