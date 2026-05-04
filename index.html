@@ -119,6 +119,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);height:100vh
 
 /* ── HEADER ── */
 header{display:flex;align-items:center;padding:0 24px;height:56px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;gap:16px;box-shadow:var(--shadow-sm);z-index:20;}
+.hdr-mobile-l,.hdr-mobile-c,.hdr-mobile-r{display:none;}
 .logo{display:flex;align-items:center;}
 .logo-symbol{display:none;}
 .logo-wordmark{height:24px;width:auto;}
@@ -429,72 +430,185 @@ main{display:flex;flex:1;overflow:hidden;min-height:0;}
 @media(max-width:768px){
   /* ── PREVENT HORIZONTAL SCROLL ── */
   html,body{overflow-x:hidden!important;max-width:100vw!important;}
-  main{overflow-x:hidden!important;}
-  #right{overflow-x:hidden!important;width:100%!important;}
+  main{overflow-x:hidden!important;flex-direction:column;}
 
-  /* ── HEADER MOBIL ── */
-  header{padding:0 10px;height:50px;gap:5px;overflow:hidden;}
-  .logo-wordmark{height:18px;}
-  .header-sep{display:none;}
-  #dt{display:none;}
-  .ai-badge{display:none;}
-  .btn-hdr.ghost[onclick*="openEOD"]{display:none!important;}
-  .btn-hdr.ghost[onclick*="openTeamBrief"]{display:none!important;}
-  #spotify-widget{display:none!important;}
-  #sidebar-resize{display:none;}
-  #btn-key{font-size:11px;padding:5px 9px;border-radius:16px;}
-  .btn-hdr[onclick*="openReports"]{font-size:11px;padding:5px 11px;}
-  .qs-btn{padding:4px 7px 4px 4px!important;}
-  #push-bell-btn,#push-status-btn{font-size:14px;padding:5px 8px;cursor:pointer!important;}
+  /* ══════════════════════════════════════════════════════
+     DIRECTION B — MOBILE
+     ══════════════════════════════════════════════════════ */
 
-  /* ── LAYOUT ── */
-  #left{display:none;}
+  /* ── HEADER: hamburger + brand center + sheet trigger ── */
+  header{padding:0 14px;height:54px;gap:10px;overflow:hidden;background:var(--bg);border-bottom:1px solid var(--border);position:relative;z-index:50;}
+  /* Hide everything in header by default */
+  .logo-wordmark,.header-sep,#dt,.ai-badge,#spotify-widget,
+  .btn-hdr.ghost[onclick*="openEOD"],
+  .btn-hdr.ghost[onclick*="openTeamBrief"],
+  .btn-hdr[onclick*="openReports"],
+  #btn-key,
+  #sidebar-resize,
+  #push-bell-btn,#push-status-btn,
+  .user-name,
+  .qs-btn{display:none!important;}
+
+  /* New mobile header structure */
+  .hdr-mobile-l,.hdr-mobile-c,.hdr-mobile-r{display:flex;align-items:center;}
+  .hdr-mobile-l{position:absolute;left:14px;top:50%;transform:translateY(-50%);}
+  .hdr-mobile-r{position:absolute;right:14px;top:50%;transform:translateY(-50%);}
+  .hdr-mobile-c{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--font);font-weight:600;font-size:15px;color:var(--text);gap:6px;letter-spacing:-.2px;}
+  .hdr-mobile-c .brand-mark{width:18px;height:18px;flex-shrink:0;}
+  .hdr-icon-btn{width:36px;height:36px;border-radius:9px;border:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:center;color:var(--text);cursor:pointer;padding:0;transition:all .15s;}
+  .hdr-icon-btn:active{background:var(--brand-light);border-color:var(--brand-mid);}
+  .hdr-icon-btn svg{width:18px;height:18px;}
+  /* user-btn becomes part of right side */
+  .user-btn{padding:0!important;width:36px;height:36px;background:var(--bg2)!important;border:1px solid var(--border);border-radius:9px;}
+  .user-btn .user-avatar{width:24px;height:24px;font-size:10px;}
+
+  /* ── LAYOUT: hide desktop rails ── */
+  #left{display:none!important;}
+  #right-rail{display:none!important;}
   #sidebar-rail{display:none!important;}
-  main{flex-direction:column;-webkit-flex-direction:column;}
-  #right{display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;overflow:hidden;min-height:0;flex:1;}
+  #center-main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);min-height:0;}
 
-  /* ── MOBILE TASK STRIP ── */
-  #mobile-task-strip{display:flex;flex-direction:column;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;}
-  .strip-top{display:flex;align-items:center;padding:7px 14px 5px;gap:8px;}
-  .strip-date{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-faint);}
-  .strip-count{background:var(--brand-light);color:var(--brand);font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;border:1px solid rgba(201,123,110,.2);}
-  .strip-expand{margin-left:auto;background:none;border:none;color:var(--text-faint);font-size:11px;cursor:pointer;font-family:var(--font);font-weight:600;padding:2px 6px;}
-  .strip-pills{display:flex;gap:6px;padding:0 14px 8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
-  .strip-pills::-webkit-scrollbar{display:none;}
-  .strip-pill{display:flex;align-items:center;gap:6px;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:5px 11px;white-space:nowrap;flex-shrink:0;cursor:pointer;transition:all .15s;}
-  .strip-pill:active{background:var(--brand-light);border-color:rgba(201,123,110,.3);}
-  .sp-dot{width:7px;height:7px;border:2px solid var(--border2);border-radius:50%;flex-shrink:0;}
-  .sp-dot.done{background:var(--green);border-color:var(--green);}
-  .sp-dot.overdue{background:var(--red);border-color:var(--red);}
-  .sp-dot.waiting{background:var(--blue);border-color:var(--blue);}
-  .sp-dot.blocked{background:var(--amber);border-color:var(--amber);}
-  .sp-text{font-size:11px;font-weight:500;color:var(--text);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  /* ── HERO: kicker + headline + stat rows ── */
+  #hero-block{padding:18px 18px 14px;text-align:left;border-bottom:none;flex-shrink:0;}
+  #hero-kicker{font-size:10px;letter-spacing:1.6px;color:var(--brand);margin-bottom:8px;}
+  #hero-headline{font-size:24px;font-weight:500;line-height:1.22;letter-spacing:-.7px;margin-bottom:14px;}
+  #hero-subtitle{color:var(--text-mid);}
+  #hero-stats{justify-content:flex-start;flex-wrap:wrap;gap:0 14px;font-size:11px;letter-spacing:.5px;margin-bottom:6px;row-gap:6px;}
+  .stat-pair{flex:0 0 auto;}
+  #hero-day-nav{justify-content:flex-start;margin-top:6px;}
 
-  /* ── CHAT ── */
-  #chat-msgs{flex:1;-webkit-flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;padding:12px 10px;}
-  .msg{max-width:88%;}
+  /* ── CHAT: full width, generous bubbles ── */
+  #chat-msgs{padding:14px 16px;gap:14px;}
+  .msg{max-width:85%;font-size:14px;line-height:1.45;}
+  .msg.user{background:var(--brand)!important;color:#1C1816!important;border-radius:18px;padding:10px 14px;}
+  .msg.bot{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:12px 14px;}
 
-  /* ── BOTTOM CHIPS ── */
-  #chips{padding:6px 10px 3px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  /* ── CHIPS: scroll horizontal ── */
+  #chips{display:flex;gap:6px;padding:6px 16px 8px;overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
   #chips::-webkit-scrollbar{display:none;}
-  .chip{white-space:nowrap;flex-shrink:0;font-size:11px;padding:5px 10px;}
+  .chip{white-space:nowrap;flex-shrink:0;font-size:11px;padding:6px 12px;border-radius:16px;}
 
   /* ── ASSIGN TO ── */
-  #assignee-row{padding:4px 10px;}
+  #assignee-row{padding:4px 16px 0;}
+  .assignee-label{font-size:9.5px;}
 
-  /* ── INPUT BAR ── */
-  #input-bar{padding:8px 10px 14px;gap:6px;position:relative;z-index:10;background:var(--bg2);}
-  #chat-in{font-size:16px!important;-webkit-appearance:none;border-radius:22px;}
-  #send-btn{-webkit-appearance:none;flex-shrink:0;}
+  /* ── STICKY INPUT BAR ── */
+  #input-bar{padding:10px 14px calc(10px + env(safe-area-inset-bottom));gap:8px;background:var(--bg);border-top:1px solid var(--border);flex-shrink:0;position:sticky;bottom:0;z-index:20;}
+  #chat-in{font-size:16px!important;-webkit-appearance:none;border-radius:22px;background:var(--bg2)!important;border:1px solid var(--border)!important;padding:11px 14px!important;min-height:42px;}
+  #attach-btn,#mic-btn,#mic-lang-btn{flex-shrink:0;width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:none;border:1px solid var(--border);}
+  #send-btn{-webkit-appearance:none;flex-shrink:0;width:42px;height:42px;border-radius:50%;background:var(--brand);color:#1C1816;font-size:18px;}
+  /* Voice listening visual hint inside input */
+  #input-bar.is-listening #chat-in{display:none;}
+  #input-bar.is-listening .voice-listening-bar{display:flex;}
+  .voice-listening-bar{display:none;flex:1;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--brand-mid);border-radius:22px;padding:10px 14px;min-height:42px;}
+  .voice-waves{display:flex;align-items:center;gap:2px;height:18px;}
+  .voice-waves span{display:block;width:2.5px;background:var(--brand);border-radius:2px;animation:wv .9s ease-in-out infinite alternate;}
+  .voice-waves span:nth-child(1){height:6px;animation-delay:.05s;}
+  .voice-waves span:nth-child(2){height:11px;animation-delay:.15s;}
+  .voice-waves span:nth-child(3){height:14px;animation-delay:.25s;}
+  .voice-waves span:nth-child(4){height:8px;animation-delay:.35s;}
+  .voice-waves span:nth-child(5){height:13px;animation-delay:.45s;}
+  .voice-waves span:nth-child(6){height:6px;animation-delay:.55s;}
+  .voice-waves span:nth-child(7){height:11px;animation-delay:.65s;}
+  .voice-waves span:nth-child(8){height:9px;animation-delay:.75s;}
+  .voice-listening-text{font-family:var(--mono);font-size:11px;letter-spacing:1.4px;color:var(--brand);text-transform:uppercase;}
+  .voice-listening-time{font-family:var(--mono);font-size:11px;color:var(--text-faint);margin-left:auto;letter-spacing:.5px;}
+  @keyframes wv{from{transform:scaleY(.4);}to{transform:scaleY(1.4);}}
 
-  /* ── MODALS ── */
+  /* ── HIDE desktop status board on mobile (use sheet instead) ── */
+  #task-board-bar{display:none;}
+  #status-board{display:none;}
+
+  /* ── DRAWER: slide-in from left ── */
+  #mobile-drawer{position:fixed;inset:0;z-index:200;display:none;}
+  #mobile-drawer.open{display:block;}
+  #mobile-drawer .drawer-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.55);animation:fadeIn .2s ease;}
+  #mobile-drawer .drawer-panel{position:absolute;top:0;bottom:0;left:0;width:84%;max-width:340px;background:var(--bg2);display:flex;flex-direction:column;animation:slideInL .26s cubic-bezier(.4,0,.2,1);overflow:hidden;}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes slideInL{from{transform:translateX(-100%);}to{transform:translateX(0);}}
+  .drawer-head{display:flex;align-items:center;padding:18px 18px 14px;gap:10px;border-bottom:1px solid var(--border);flex-shrink:0;}
+  .drawer-brand{display:flex;flex-direction:column;flex:1;}
+  .drawer-brand-l{font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;color:var(--text-faint);}
+  .drawer-brand-n{font-family:var(--font);font-size:16px;font-weight:600;color:var(--text);letter-spacing:-.2px;margin-top:1px;}
+  .drawer-close{background:var(--bg);border:1px solid var(--border);width:32px;height:32px;border-radius:8px;color:var(--text-mid);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .drawer-body{flex:1;overflow-y:auto;padding:14px;}
+  .drawer-user{display:flex;align-items:center;gap:11px;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:11px 13px;margin-bottom:14px;}
+  .drawer-user-av{width:36px;height:36px;border-radius:50%;background:var(--brand);color:#1C1816;font-weight:700;font-size:13px;font-family:var(--mono);display:flex;align-items:center;justify-content:center;flex-shrink:0;text-transform:uppercase;}
+  .drawer-user-info{flex:1;min-width:0;}
+  .drawer-user-name{font-size:14px;font-weight:600;color:var(--text);}
+  .drawer-user-role{font-family:var(--mono);font-size:10px;letter-spacing:1.2px;color:var(--text-faint);text-transform:uppercase;margin-top:1px;}
+  .drawer-user-switch{background:none;border:none;color:var(--text-faint);font-size:14px;padding:4px;cursor:pointer;}
+
+  .drawer-nav{display:flex;flex-direction:column;gap:2px;margin-bottom:14px;}
+  .drawer-nav-item{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:10px;cursor:pointer;background:none;border:none;width:100%;text-align:left;font-family:var(--font);color:var(--text-mid);font-size:14px;font-weight:500;transition:all .15s;}
+  .drawer-nav-item:active{background:var(--brand-light);}
+  .drawer-nav-item.active{background:var(--brand-light);color:var(--text);font-weight:600;border:1px solid var(--brand-mid);}
+  .drawer-nav-icon{font-size:14px;opacity:.85;width:18px;text-align:center;}
+  .drawer-nav-count{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--text-faint);}
+  .drawer-nav-item.active .drawer-nav-count{color:var(--brand);font-weight:600;}
+
+  .drawer-section-label{font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;color:var(--text-faint);text-transform:uppercase;padding:8px 12px 6px;}
+  .drawer-space-item{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:8px;font-family:var(--font);color:var(--text-mid);font-size:13px;background:none;border:none;width:100%;text-align:left;cursor:pointer;}
+  .drawer-space-item:active{background:var(--brand-light);}
+  .drawer-space-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+  .drawer-space-count{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--text-faint);}
+
+  .drawer-foot{padding:12px 14px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--border);flex-shrink:0;background:var(--bg2);}
+  .drawer-mini-spotify{display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:8px 10px;}
+  .dms-art{width:32px;height:32px;border-radius:6px;background:linear-gradient(135deg,#A86E82,#16111F);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.8);font-size:14px;}
+  .dms-info{flex:1;min-width:0;}
+  .dms-track{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .dms-artist{font-family:var(--mono);font-size:9.5px;letter-spacing:1px;color:var(--text-faint);text-transform:uppercase;margin-top:1px;}
+  .dms-mic{width:32px;height:32px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);color:var(--text-mid);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;cursor:pointer;}
+  .dms-send{width:32px;height:32px;border-radius:50%;background:var(--brand);color:#1C1816;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;border:none;cursor:pointer;}
+
+  /* ── STATUS SHEET: slide-up from bottom ── */
+  #mobile-sheet{position:fixed;inset:0;z-index:200;display:none;}
+  #mobile-sheet.open{display:block;}
+  #mobile-sheet .sheet-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45);animation:fadeIn .2s ease;}
+  #mobile-sheet .sheet-panel{position:absolute;left:0;right:0;bottom:0;top:80px;background:var(--bg2);border-radius:22px 22px 0 0;display:flex;flex-direction:column;animation:slideUp .28s cubic-bezier(.4,0,.2,1);overflow:hidden;}
+  @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+  .sheet-grabber{width:36px;height:4px;background:var(--border2);border-radius:3px;margin:10px auto 4px;flex-shrink:0;}
+  .sheet-head{display:flex;align-items:center;padding:8px 18px 12px;gap:10px;flex-shrink:0;}
+  .sheet-title{font-size:18px;font-weight:600;color:var(--text);letter-spacing:-.3px;}
+  .sheet-meta{font-family:var(--mono);font-size:10px;letter-spacing:1.4px;color:var(--text-faint);text-transform:uppercase;}
+  .sheet-close{margin-left:auto;background:var(--bg);border:1px solid var(--border);width:30px;height:30px;border-radius:8px;color:var(--text-mid);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .sheet-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 18px 12px;flex-shrink:0;}
+  .sheet-tab{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;font-family:var(--font);}
+  .sheet-tab.active{background:var(--brand-light);border-color:var(--brand-mid);}
+  .sheet-tab-l{font-family:var(--mono);font-size:9px;letter-spacing:1.4px;color:var(--text-mid);text-transform:uppercase;display:flex;align-items:center;gap:5px;}
+  .sheet-tab.active .sheet-tab-l{color:var(--brand);}
+  .sheet-tab-c{font-size:18px;font-weight:600;color:var(--text);font-family:var(--mono);}
+  .sheet-tab .tab-dot{width:8px;height:8px;border-radius:2px;background:var(--text-faint);}
+  .sheet-tab.tab-todo .tab-dot{background:var(--text-faint);}
+  .sheet-tab.tab-progress .tab-dot{background:var(--brand);}
+  .sheet-tab.tab-done .tab-dot{background:var(--text-faint);opacity:.5;}
+  .sheet-body{flex:1;overflow-y:auto;padding:8px 18px 18px;display:flex;flex-direction:column;gap:10px;}
+  .sheet-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:13px 14px;}
+  .sheet-card.is-done{opacity:.55;}
+  .sheet-card.is-done .sc-title{text-decoration:line-through;}
+  .sc-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px;}
+  .sc-check{width:18px;height:18px;border:1.5px solid var(--border2);border-radius:5px;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+  .sc-check.checked{background:var(--brand);border-color:var(--brand);color:#1C1816;font-size:11px;}
+  .sc-title{font-size:14px;font-weight:500;color:var(--text);line-height:1.3;flex:1;}
+  .sc-desc{font-size:12.5px;color:var(--text-mid);line-height:1.4;margin:4px 0 8px 28px;}
+  .sc-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:28px;}
+  .sc-tag{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;padding:3px 8px;border-radius:5px;display:inline-flex;align-items:center;gap:5px;}
+  .sc-tag .sc-tag-dot{width:7px;height:7px;border-radius:1.5px;}
+  .sc-due{font-family:var(--mono);font-size:10.5px;color:var(--text-faint);letter-spacing:.4px;text-transform:uppercase;}
+  .sc-avatar{width:22px;height:22px;border-radius:50%;background:var(--purple-light);color:var(--purple);font-size:9.5px;font-weight:700;font-family:var(--mono);display:flex;align-items:center;justify-content:center;flex-shrink:0;text-transform:uppercase;margin-left:auto;}
+  .sheet-empty{font-size:12px;color:var(--text-faint);text-align:center;padding:24px 0;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;}
+  .sheet-pagination{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 0 14px;flex-shrink:0;}
+  .sheet-page-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);transition:all .2s;}
+  .sheet-page-dot.active{background:var(--brand);width:14px;border-radius:3px;}
+
+  /* ── MODALS — bottom sheet style ── */
   .overlay{align-items:flex-end;}
   .modal{width:100%;border-radius:20px 20px 0 0;max-height:90vh;}
   .modal.sm{width:100%;border-radius:20px 20px 0 0;}
 
-  /* ── USER BTN ── */
-  .user-name{display:none;}
-  .user-btn{padding:4px 8px 4px 4px;}
+  /* ── HIDE old desktop nav-bottom buttons & view-as ── */
+  #view-as-section{display:none;}
 }
 
 /* Samsung Internet & older Android WebView fixes */
@@ -736,15 +850,268 @@ header,main{position:relative;z-index:1;}
 #viewing-as-banner.visible{display:block;}
 #viewing-as-banner button{background:none;border:none;color:var(--brand);text-decoration:underline;cursor:pointer;font-family:var(--mono);font-size:11px;margin-left:8px;}
 
+/* ── MOBILE TOPBAR (hidden on desktop) ── */
+#mobile-topbar{display:none;}
+#mobile-drawer{display:none;}
+#mobile-sheet{display:none;}
+
+@keyframes slideInL{from{transform:translateX(-100%);}to{transform:translateX(0);}}
+@keyframes slideUpSheet{from{transform:translateY(100%);}to{transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes wv{from{transform:scaleY(.4);}to{transform:scaleY(1.4);}}
+
 @media(max-width:900px){
-  #hero-headline{font-size:24px;}
-  #status-board{grid-template-columns:1fr;}
+  /* Hide desktop chrome */
+  header{display:none !important;}
+  #left{display:none !important;}
+  #right-rail{display:none !important;}
+  #task-board-bar{display:none !important;}
+  #status-board{display:none !important;}
+
+  /* Show mobile topbar */
+  #mobile-topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 16px 12px;background:var(--bg);
+    border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;
+    flex-shrink:0;
+  }
+  .mt-icon-btn{
+    width:38px;height:38px;border-radius:10px;border:1px solid var(--border);
+    background:transparent;color:var(--text);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    transition:all .15s;
+  }
+  .mt-icon-btn:active{background:var(--bg2);}
+  .mt-brand{
+    display:flex;align-items:center;gap:7px;font-family:var(--mono);
+    font-size:11px;letter-spacing:1.2px;text-transform:uppercase;
+  }
+  .mt-brand-mark{
+    width:18px;height:18px;border-radius:50%;
+    background:transparent;
+    box-shadow:inset 0 0 0 2px var(--brand);position:relative;
+  }
+  .mt-brand-mark::after{
+    content:'';position:absolute;top:-3px;right:-3px;
+    width:7px;height:7px;border-radius:50%;background:var(--brand);
+  }
+  .mt-date{font-family:var(--mono);font-size:9.5px;color:var(--text-faint);letter-spacing:1.4px;text-transform:uppercase;margin-bottom:3px;display:block;}
+
+  /* Mobile main layout */
+  body{overflow:hidden;}
+  main{display:flex;flex-direction:column;height:100vh;height:100dvh;}
+  #center-main{padding:0;display:flex;flex-direction:column;flex:1;min-height:0;}
+
+  /* Compact hero */
+  #hero-block{padding:20px 18px 14px;text-align:left;border:none;}
+  #hero-kicker{font-size:10.5px;letter-spacing:1.6px;margin-bottom:10px;}
+  #hero-headline{font-size:26px;line-height:1.18;letter-spacing:-.7px;margin-bottom:14px;font-weight:500;text-align:left;}
+  #hero-subtitle{display:block;color:var(--text-mid);}
+  #hero-stats{justify-content:flex-start;flex-wrap:wrap;gap:8px 14px;margin-bottom:0;font-size:10.5px;}
+  #hero-day-nav{display:none;}
+  #date-picker-wrap{padding:8px 18px;}
+  #date-picker-wrap input{width:100% !important;}
+
+  /* Chat full width */
+  #chat-msgs{padding:12px 16px 8px;flex:1;}
+  .msg{max-width:88%;}
+
+  /* Hide chips on mobile (they go in input area or drawer) */
+  #chips{display:none;}
+
+  /* Hide assignee row inline — it gets compact */
+  #assignee-row{padding:6px 16px;background:var(--bg);}
+  .assignee-label{font-size:10px;}
+
+  /* Sticky input bar */
+  #input-bar{
+    position:sticky;bottom:0;padding:10px 12px 14px;background:var(--bg);
+    border-top:1px solid var(--border);gap:6px;flex-shrink:0;
+  }
+  #input-bar #chat-in{
+    background:var(--bg2);border:1.5px solid var(--brand-mid);
+    border-radius:14px;padding:11px 14px;font-size:14px;
+  }
+  #input-bar #chat-in:focus{border-color:var(--brand);}
+  #attach-btn,#mic-btn,#mic-lang-btn{
+    width:38px;height:38px;border-radius:10px;flex-shrink:0;
+    background:var(--bg2);border:1px solid var(--border);
+  }
+  #send-btn{
+    width:42px;height:42px;border-radius:50%;flex-shrink:0;
+    background:var(--brand);color:#1C1816;border:none;
+    font-size:16px;font-weight:600;
+  }
+
+  /* Listening state (when mic active) */
+  #input-bar.listening #chat-in{display:none;}
+  #input-bar.listening .listen-display{
+    display:flex;align-items:center;gap:10px;flex:1;
+    background:var(--bg2);border:1.5px solid var(--brand);border-radius:14px;
+    padding:10px 14px;
+  }
+  .listen-display{display:none;}
+  .listen-waves{display:flex;align-items:center;gap:2px;height:18px;}
+  .listen-waves span{
+    width:2px;height:60%;background:var(--brand);border-radius:2px;
+    animation:wv .55s ease-in-out infinite alternate;
+    transform-origin:center;
+  }
+  .listen-waves span:nth-child(2){animation-delay:.08s;}
+  .listen-waves span:nth-child(3){animation-delay:.16s;}
+  .listen-waves span:nth-child(4){animation-delay:.24s;}
+  .listen-waves span:nth-child(5){animation-delay:.32s;}
+  .listen-waves span:nth-child(6){animation-delay:.40s;}
+  .listen-waves span:nth-child(7){animation-delay:.48s;}
+  .listen-label{
+    font-family:var(--mono);font-size:11px;color:var(--brand);
+    letter-spacing:1.2px;text-transform:uppercase;font-weight:600;
+  }
+  .listen-time{font-family:var(--mono);font-size:11px;color:var(--text-mid);margin-left:auto;}
+
+  /* ── DRAWER ── */
+  #mobile-drawer{
+    display:block;position:fixed;inset:0;z-index:1000;
+    pointer-events:none;
+  }
+  #mobile-drawer.open{pointer-events:auto;}
+  #mobile-drawer .md-backdrop{
+    position:absolute;inset:0;background:rgba(0,0,0,.55);
+    opacity:0;transition:opacity .25s;
+  }
+  #mobile-drawer.open .md-backdrop{opacity:1;}
+  #mobile-drawer .md-panel{
+    position:absolute;top:0;left:0;bottom:0;width:84%;max-width:340px;
+    background:var(--bg2);border-right:1px solid var(--border);
+    transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  #mobile-drawer.open .md-panel{transform:translateX(0);}
+  .md-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 18px 14px;border-bottom:1px solid var(--border);
+  }
+  .md-brand{
+    display:flex;align-items:center;gap:10px;font-family:var(--mono);
+    font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-faint);
+  }
+  .md-brand-name{color:var(--text);font-size:13px;font-family:var(--font);text-transform:none;letter-spacing:-.2px;font-weight:500;display:block;margin-top:1px;}
+  .md-user-card{
+    margin:14px 14px 6px;padding:12px 14px;display:flex;align-items:center;gap:11px;
+    background:var(--bg);border:1px solid var(--border);border-radius:12px;
+  }
+  .md-user-avatar{
+    width:36px;height:36px;border-radius:50%;background:var(--brand-light);
+    color:var(--brand);font-family:var(--mono);font-size:11px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .md-user-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.2;}
+  .md-user-role{font-size:10px;font-family:var(--mono);color:var(--text-faint);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+  .md-switch{margin-left:auto;background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:14px;}
+  .md-section{padding:8px 10px;flex-shrink:0;}
+  .md-section-label{font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--text-faint);font-family:var(--mono);padding:12px 12px 6px;text-transform:uppercase;}
+  .md-item{
+    display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;
+    cursor:pointer;font-size:14px;color:var(--text);font-weight:500;
+    background:none;border:none;width:100%;text-align:left;font-family:var(--font);
+    transition:background .15s;
+  }
+  .md-item:active{background:var(--bg);}
+  .md-item.active{background:var(--brand-light);color:var(--text);font-weight:600;}
+  .md-item-icon{width:18px;color:var(--text-faint);flex-shrink:0;font-size:14px;display:inline-flex;justify-content:center;}
+  .md-item.active .md-item-icon{color:var(--brand);}
+  .md-item-count{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--text-faint);letter-spacing:.5px;}
+  .md-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+  .md-list{display:flex;flex-direction:column;gap:1px;flex:1;overflow-y:auto;padding:0 10px 10px;}
+  .md-spotify{
+    margin:10px 14px 14px;padding:10px 12px;display:flex;align-items:center;gap:10px;
+    background:var(--bg);border:1px solid var(--border);border-radius:12px;
+    flex-shrink:0;
+  }
+  .md-spotify .md-sp-art{width:32px;height:32px;border-radius:6px;background:linear-gradient(135deg,#A86E82,#16111F);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;}
+  .md-spotify .md-sp-info{min-width:0;flex:1;}
+  .md-spotify .md-sp-track{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .md-spotify .md-sp-artist{font-size:9px;font-family:var(--mono);color:var(--text-faint);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+
+  /* ── STATUS SHEET ── */
+  #mobile-sheet{
+    display:block;position:fixed;inset:0;z-index:1000;
+    pointer-events:none;
+  }
+  #mobile-sheet.open{pointer-events:auto;}
+  #mobile-sheet .ms-backdrop{
+    position:absolute;inset:0;background:rgba(0,0,0,.55);
+    opacity:0;transition:opacity .25s;
+  }
+  #mobile-sheet.open .ms-backdrop{opacity:1;}
+  #mobile-sheet .ms-panel{
+    position:absolute;left:0;right:0;bottom:0;
+    background:var(--bg);border-top:1px solid var(--border);
+    border-radius:18px 18px 0 0;
+    transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+    max-height:88vh;display:flex;flex-direction:column;
+  }
+  #mobile-sheet.open .ms-panel{transform:translateY(0);}
+  .ms-grabber{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:8px auto 4px;flex-shrink:0;}
+  .ms-head{display:flex;align-items:center;padding:8px 18px 12px;flex-shrink:0;}
+  .ms-title{font-size:18px;font-weight:600;color:var(--text);letter-spacing:-.3px;}
+  .ms-meta{font-family:var(--mono);font-size:9px;color:var(--text-faint);letter-spacing:1.4px;text-transform:uppercase;margin-left:8px;align-self:center;}
+  .ms-close{margin-left:auto;width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;}
+  .ms-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 14px 12px;flex-shrink:0;}
+  .ms-tab{
+    background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+    padding:10px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;
+    transition:all .15s;
+  }
+  .ms-tab.active{background:var(--brand-light);border-color:var(--brand);}
+  .ms-tab-name{font-family:var(--mono);font-size:9.5px;font-weight:600;color:var(--text);letter-spacing:1.2px;text-transform:uppercase;display:flex;align-items:center;gap:5px;}
+  .ms-tab-name::before{content:'';width:6px;height:6px;border-radius:1px;background:var(--text-faint);}
+  .ms-tab[data-st="todo"] .ms-tab-name::before{background:var(--text-faint);}
+  .ms-tab[data-st="in_progress"] .ms-tab-name::before{background:var(--brand);}
+  .ms-tab[data-st="done"] .ms-tab-name::before{background:var(--text-faint);opacity:.5;}
+  .ms-tab.active .ms-tab-name{color:var(--text);}
+  .ms-tab-count{font-size:18px;font-weight:600;color:var(--text);font-family:var(--mono);}
+  .ms-list{flex:1;overflow-y:auto;padding:4px 14px 24px;display:flex;flex-direction:column;gap:8px;}
+  .ms-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;}
+  .ms-card-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;}
+  .ms-card-check{width:18px;height:18px;border:1.5px solid var(--border2);border-radius:5px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;}
+  .ms-card-check.checked{background:var(--brand);border-color:var(--brand);color:#1C1816;font-size:11px;}
+  .ms-card-title{font-size:14px;font-weight:500;color:var(--text);line-height:1.35;flex:1;word-break:break-word;}
+  .ms-card-desc{font-size:12px;color:var(--text-faint);line-height:1.4;margin-bottom:10px;padding-left:28px;}
+  .ms-card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-left:28px;}
+  .ms-card-tag{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;padding:3px 7px;border-radius:5px;display:inline-flex;align-items:center;gap:5px;}
+  .ms-card-tag .dot{width:6px;height:6px;border-radius:1px;}
+  .ms-card-due{font-family:var(--mono);font-size:10px;color:var(--text-faint);letter-spacing:.4px;text-transform:uppercase;}
+  .ms-card-avatar{width:22px;height:22px;border-radius:50%;background:var(--purple-light);color:var(--purple);font-size:9px;font-weight:700;font-family:var(--mono);display:flex;align-items:center;justify-content:center;margin-left:auto;text-transform:uppercase;}
+  .ms-empty{text-align:center;color:var(--text-faint);font-size:12px;padding:30px 0;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;}
+}
+
+@media(max-width:900px){
+  #viewing-as-banner{padding:7px 14px;font-size:10px;}
 }
 </style>
 </head>
 <body>
 
 <header>
+  <!-- Mobile-only header (hamburger + center brand + sheet trigger) -->
+  <div class="hdr-mobile-l">
+    <button class="hdr-icon-btn" onclick="openMobileDrawer()" aria-label="Menu">
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 5h14M2 9h14M2 13h14"/></svg>
+    </button>
+  </div>
+  <div class="hdr-mobile-c">
+    <svg class="brand-mark" viewBox="0 0 352 349" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="303" cy="300" r="40" fill="none" stroke="#EF9C7F" stroke-width="20"/>
+      <circle cx="143" cy="143" r="115" fill="none" stroke="#EF9C7F" stroke-width="40"/>
+    </svg>
+    <span>Cockpit</span>
+  </div>
+  <div class="hdr-mobile-r">
+    <button class="hdr-icon-btn" onclick="openMobileSheet()" aria-label="Tasks">
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 3v12M9 3v12M14 3v12"/></svg>
+    </button>
+  </div>
   <div class="logo"><svg class="logo-symbol" width="32" height="32" viewBox="0 0 352 349" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M303.186 251.915C331.357 251.915 351.991 273.142 351.992 300.52C351.992 327.899 331.358 348.931 303.186 348.931C275.213 348.93 254.58 327.898 254.58 300.52C254.581 273.143 275.213 251.916 303.186 251.915ZM303.186 270.561C287.117 270.562 275.411 283.063 275.41 300.52C275.41 317.78 287.117 330.284 303.186 330.285C319.256 330.285 331.162 317.781 331.162 300.52C331.161 283.062 319.255 270.561 303.186 270.561Z" fill="url(#sym_grad0)"/>
 <path fill-rule="evenodd" clip-rule="evenodd" d="M143.485 0C226.095 0 287.54 62.5727 287.54 143.278C287.539 223.981 226.612 285.939 143.485 285.939C60.9239 285.938 0.00104496 223.981 0 143.278C0 62.5734 60.8762 0.0010124 143.485 0ZM143.485 55.0084C96.0654 55.0094 61.4918 91.8395 61.4918 143.278C61.4927 194.715 96.019 230.977 143.485 230.978C190.905 230.978 226.047 194.152 226.048 143.278C226.048 92.4025 190.906 55.0084 143.485 55.0084Z" fill="url(#sym_grad1)"/>
@@ -991,6 +1358,118 @@ header,main{position:relative;z-index:1;}
   </div>
 </div>
 
+<!-- ── MOBILE TOPBAR ── -->
+<div id="mobile-topbar">
+  <button class="mt-icon-btn" onclick="openMobileDrawer()" aria-label="Menu">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 5h12M3 9h12M3 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </button>
+  <div style="text-align:center;">
+    <span class="mt-date" id="mt-date">—</span>
+    <div class="mt-brand">
+      <span class="mt-brand-mark"></span>
+      <span style="font-family:var(--font);font-size:14px;text-transform:none;letter-spacing:-.2px;color:var(--text);font-weight:500;">Cockpit</span>
+    </div>
+  </div>
+  <button class="mt-icon-btn" onclick="openMobileSheet()" aria-label="Status board">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="3" height="12" stroke="currentColor" stroke-width="1.5" rx="1"/><rect x="7.5" y="3" width="3" height="12" stroke="currentColor" stroke-width="1.5" rx="1"/><rect x="12" y="3" width="3" height="12" stroke="currentColor" stroke-width="1.5" rx="1"/></svg>
+  </button>
+</div>
+
+<!-- ── MOBILE DRAWER ── -->
+<div id="mobile-drawer" onclick="if(event.target===this||event.target.classList.contains('md-backdrop'))closeMobileDrawer()">
+  <div class="md-backdrop"></div>
+  <div class="md-panel" onclick="event.stopPropagation()">
+    <div class="md-head">
+      <div class="md-brand">
+        <span class="mt-brand-mark"></span>
+        <span>OXYHELP<span class="md-brand-name">Cockpit</span></span>
+      </div>
+      <button class="mt-icon-btn" onclick="closeMobileDrawer()" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="md-user-card">
+      <div class="md-user-avatar" id="md-user-avatar">ED</div>
+      <div>
+        <div class="md-user-name" id="md-user-name">User</div>
+        <div class="md-user-role" id="md-user-role">Member</div>
+      </div>
+      <button class="md-switch" onclick="closeMobileDrawer();openSwitchModal&&openSwitchModal()" title="Switch account">⇄</button>
+    </div>
+    <div class="md-list">
+      <button class="md-item active" onclick="closeMobileDrawer();jumpToToday&&jumpToToday()">
+        <span class="md-item-icon">◐</span><span>Today</span>
+        <span class="md-item-count" id="md-today-count"></span>
+      </button>
+      <button class="md-item" onclick="closeMobileDrawer();qcmd&&qcmd('weekly report')">
+        <span class="md-item-icon">⊟</span><span>This week</span>
+      </button>
+      <button class="md-item" onclick="closeMobileDrawer();qcmd&&qcmd('what\\'s pending')">
+        <span class="md-item-icon">◻</span><span>Inbox</span>
+      </button>
+      <button class="md-item" id="md-delegated" onclick="closeMobileDrawer();openViewAsPicker&&openViewAsPicker()" style="display:none">
+        <span class="md-item-icon">↔</span><span>View as…</span>
+      </button>
+
+      <div class="md-section-label">Spaces</div>
+      <button class="md-item">
+        <span class="md-dot" style="background:var(--brand)"></span><span>My tasks</span>
+      </button>
+
+      <div class="md-section-label">More</div>
+      <button class="md-item" onclick="closeMobileDrawer();openEOD&&openEOD()">
+        <span class="md-item-icon">☀</span><span>Day End</span>
+      </button>
+      <button class="md-item" onclick="closeMobileDrawer();openReports&&openReports()">
+        <span class="md-item-icon">↗</span><span>Reports</span>
+      </button>
+      <button class="md-item" id="md-team" onclick="closeMobileDrawer();openTeamBrief&&openTeamBrief()" style="display:none">
+        <span class="md-item-icon">▦</span><span>Team</span>
+      </button>
+      <button class="md-item" onclick="toggleDarkMode()">
+        <span class="md-item-icon" id="md-theme-icon">🌙</span><span id="md-theme-label">Dark</span>
+      </button>
+    </div>
+    <div class="md-spotify" onclick="handleSpotifyClick()">
+      <div class="md-sp-art" id="md-sp-art">♫</div>
+      <div class="md-sp-info">
+        <div class="md-sp-track" id="md-sp-track">Not playing</div>
+        <div class="md-sp-artist" id="md-sp-artist">Spotify</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MOBILE STATUS SHEET ── -->
+<div id="mobile-sheet" onclick="if(event.target===this||event.target.classList.contains('ms-backdrop'))closeMobileSheet()">
+  <div class="ms-backdrop"></div>
+  <div class="ms-panel" onclick="event.stopPropagation()">
+    <div class="ms-grabber"></div>
+    <div class="ms-head">
+      <div class="ms-title">All today</div>
+      <span class="ms-meta" id="ms-meta">0 TASKS</span>
+      <button class="ms-close" onclick="closeMobileSheet()" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin:auto;display:block"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="ms-tabs">
+      <button class="ms-tab" data-st="todo" onclick="setSheetTab('todo')">
+        <span class="ms-tab-name">To do</span>
+        <span class="ms-tab-count" id="ms-count-todo">0</span>
+      </button>
+      <button class="ms-tab active" data-st="in_progress" onclick="setSheetTab('in_progress')">
+        <span class="ms-tab-name">In progress</span>
+        <span class="ms-tab-count" id="ms-count-progress">0</span>
+      </button>
+      <button class="ms-tab" data-st="done" onclick="setSheetTab('done')">
+        <span class="ms-tab-name">Done</span>
+        <span class="ms-tab-count" id="ms-count-done">0</span>
+      </button>
+    </div>
+    <div class="ms-list" id="ms-list"></div>
+  </div>
+</div>
+
 <main>
   <!-- ── LEFT NAV RAIL ── -->
   <aside id="left">
@@ -1103,6 +1582,11 @@ header,main{position:relative;z-index:1;}
       <button id="attach-btn" onclick="document.getElementById('attach-input').click()" title="Attach image">📎</button>
       <input type="file" id="attach-input" accept="image/*" style="display:none" onchange="handleAttach(event)">
       <textarea id="chat-in" rows="1" placeholder="Just lay it on me — we can do it together."></textarea>
+      <div class="voice-listening-bar">
+        <div class="voice-waves"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <span class="voice-listening-text">Listening</span>
+        <span class="voice-listening-time" id="voice-listening-time">00:00</span>
+      </div>
       <button id="mic-btn" onclick="toggleRecording()" title="Voice input">🎤</button>
       <button id="mic-lang-btn" onclick="toggleSpeechLang()" title="Schimbă limba (RO/EN)" style="background:none;border:none;cursor:pointer;font-size:16px;padding:4px 6px;opacity:0.7;">🇷🇴</button>
       <button id="send-btn" onclick="handleSend()">↑</button>
@@ -1167,6 +1651,117 @@ header,main{position:relative;z-index:1;}
     </div>
   </aside>
 </main>
+
+<!-- ── MOBILE DRAWER ── -->
+<div id="mobile-drawer" onclick="if(event.target===this||event.target.classList.contains('drawer-backdrop'))closeMobileDrawer()">
+  <div class="drawer-backdrop"></div>
+  <div class="drawer-panel">
+    <div class="drawer-head">
+      <svg width="22" height="22" viewBox="0 0 352 349" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="303" cy="300" r="40" fill="none" stroke="#EF9C7F" stroke-width="20"/>
+        <circle cx="143" cy="143" r="115" fill="none" stroke="#EF9C7F" stroke-width="40"/>
+      </svg>
+      <div class="drawer-brand">
+        <div class="drawer-brand-l">OXYHELP</div>
+        <div class="drawer-brand-n">Cockpit</div>
+      </div>
+      <button class="drawer-close" onclick="closeMobileDrawer()">✕</button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-user">
+        <div class="drawer-user-av" id="drawer-user-av">ED</div>
+        <div class="drawer-user-info">
+          <div class="drawer-user-name" id="drawer-user-name">Eduard</div>
+          <div class="drawer-user-role" id="drawer-user-role">Operations</div>
+        </div>
+        <button class="drawer-user-switch" onclick="closeMobileDrawer();openQuickSwitch && openQuickSwitch()" title="Switch account">⇄</button>
+      </div>
+      <div class="drawer-nav">
+        <button class="drawer-nav-item active" onclick="closeMobileDrawer();jumpToToday && jumpToToday()">
+          <span class="drawer-nav-icon">◐</span><span>Today</span>
+          <span class="drawer-nav-count" id="dwr-today-count"></span>
+        </button>
+        <button class="drawer-nav-item" onclick="closeMobileDrawer();qcmd && qcmd('weekly report')">
+          <span class="drawer-nav-icon">⊟</span><span>This week</span>
+        </button>
+        <button class="drawer-nav-item" onclick="closeMobileDrawer();qcmd && qcmd('what\\'s pending')">
+          <span class="drawer-nav-icon">◻</span><span>Inbox</span>
+        </button>
+        <button class="drawer-nav-item" onclick="closeMobileDrawer();qcmd && qcmd('tasks delegated to me')">
+          <span class="drawer-nav-icon">↗</span><span>Delegated to me</span>
+        </button>
+      </div>
+      <div class="drawer-section-label">Spaces</div>
+      <button class="drawer-space-item" onclick="closeMobileDrawer()">
+        <span class="drawer-space-dot" style="background:var(--brand)"></span>
+        <span>My tasks</span>
+      </button>
+      <div class="drawer-section-label">More</div>
+      <button class="drawer-space-item" onclick="closeMobileDrawer();openEOD && openEOD()">
+        <span class="drawer-space-dot" style="background:#888"></span>
+        <span>Day End</span>
+      </button>
+      <button class="drawer-space-item" onclick="closeMobileDrawer();openReports && openReports()">
+        <span class="drawer-space-dot" style="background:#888"></span>
+        <span>Reports</span>
+      </button>
+      <button class="drawer-space-item" id="dwr-team-btn" style="display:none" onclick="closeMobileDrawer();openTeamBrief && openTeamBrief()">
+        <span class="drawer-space-dot" style="background:#888"></span>
+        <span>Team</span>
+      </button>
+      <button class="drawer-space-item" id="dwr-viewas-btn" style="display:none" onclick="closeMobileDrawer();openViewAsPicker()">
+        <span class="drawer-space-dot" style="background:#888"></span>
+        <span>View as…</span>
+      </button>
+      <button class="drawer-space-item" onclick="toggleDarkMode()">
+        <span class="drawer-space-dot" style="background:#888"></span>
+        <span id="dwr-dark-label">Dark mode</span>
+      </button>
+    </div>
+    <div class="drawer-foot">
+      <div class="drawer-mini-spotify" onclick="closeMobileDrawer();handleSpotifyClick()">
+        <div class="dms-art">♫</div>
+        <div class="dms-info">
+          <div class="dms-track" id="dms-track">Not playing</div>
+          <div class="dms-artist" id="dms-artist">Spotify</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MOBILE STATUS SHEET ── -->
+<div id="mobile-sheet" onclick="if(event.target===this||event.target.classList.contains('sheet-backdrop'))closeMobileSheet()">
+  <div class="sheet-backdrop"></div>
+  <div class="sheet-panel">
+    <div class="sheet-grabber"></div>
+    <div class="sheet-head">
+      <span class="sheet-title">All today</span>
+      <span class="sheet-meta" id="sheet-meta">0 tasks</span>
+      <button class="sheet-close" onclick="closeMobileSheet()">✕</button>
+    </div>
+    <div class="sheet-tabs">
+      <button class="sheet-tab tab-todo active" onclick="switchSheetTab('todo')">
+        <span class="sheet-tab-l"><span class="tab-dot"></span> To do</span>
+        <span class="sheet-tab-c" id="sheet-count-todo">0</span>
+      </button>
+      <button class="sheet-tab tab-progress" onclick="switchSheetTab('in_progress')">
+        <span class="sheet-tab-l"><span class="tab-dot"></span> In progress</span>
+        <span class="sheet-tab-c" id="sheet-count-progress">0</span>
+      </button>
+      <button class="sheet-tab tab-done" onclick="switchSheetTab('done')">
+        <span class="sheet-tab-l"><span class="tab-dot"></span> Done</span>
+        <span class="sheet-tab-c" id="sheet-count-done">0</span>
+      </button>
+    </div>
+    <div class="sheet-body" id="sheet-body"></div>
+    <div class="sheet-pagination">
+      <span class="sheet-page-dot active" id="sheet-page-todo"></span>
+      <span class="sheet-page-dot" id="sheet-page-progress"></span>
+      <span class="sheet-page-dot" id="sheet-page-done"></span>
+    </div>
+  </div>
+</div>
 
 <!-- REPORTS MODAL -->
 <div id="reports-modal" class="overlay hidden">
@@ -1887,6 +2482,8 @@ function renderTasks(){
   updateGreeting();
   updateHeroStats();
   renderStatusBoard();
+  updateMobileTopbarDate();
+  if(document.getElementById('mobile-sheet')?.classList.contains('open')) renderMobileSheet();
 
   // Update weekly rail stats
   updateWeeklyRail();
@@ -4460,6 +5057,8 @@ function spInit(){
 // ═══════════════════════════════════════════════════════
 let _speechRec = null;
 let _speechActive = false;
+let _speechStartTime = 0;
+let _speechTimerInterval = null;
 let _speechFinal = '';
 let _speechInterim = '';
 let _speechLang = 'ro-RO'; // default Romanian
@@ -4502,6 +5101,15 @@ function _startSpeech(){
     btn.classList.add('recording');
     btn.textContent = '⏹';
     btn.title = 'Oprește înregistrarea';
+    // Mobile listening UI
+    if(window.innerWidth <= 900){
+      _speechStartTime = Date.now();
+      setListeningState(true, 0);
+      _speechTimerInterval = setInterval(() => {
+        const secs = Math.floor((Date.now() - _speechStartTime)/1000);
+        setListeningState(true, secs);
+      }, 500);
+    }
   };
 
   _speechRec.onresult = (e) => {
@@ -4557,6 +5165,8 @@ function _stopSpeech(){
     try { _speechRec.stop(); } catch(e){}
     _speechRec = null;
   }
+  if(_speechTimerInterval){ clearInterval(_speechTimerInterval); _speechTimerInterval = null; }
+  setListeningState(false);
   _resetMicBtn();
 }
 
@@ -4792,6 +5402,160 @@ function exitViewAs(){
   document.getElementById('viewing-as-banner').classList.remove('visible');
   document.getElementById('view-as-label').textContent = 'Self';
   renderTasks();
+}
+
+// ── MOBILE: drawer ──
+function openMobileDrawer(){
+  syncMobileDrawerData();
+  document.getElementById('mobile-drawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileDrawer(){
+  document.getElementById('mobile-drawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function syncMobileDrawerData(){
+  const u = fbUser;
+  if(u){
+    const email = u.email||'';
+    const name = u.displayName || email.split('@')[0] || 'User';
+    const initials = name.split(/[\s._-]/).slice(0,2).map(p=>p[0]||'').join('').toUpperCase().slice(0,2);
+    const av = document.getElementById('drawer-user-av');
+    const nameEl = document.getElementById('drawer-user-name');
+    const roleEl = document.getElementById('drawer-user-role');
+    if(av) av.textContent = initials || 'ME';
+    if(nameEl) nameEl.textContent = name;
+    if(roleEl) roleEl.textContent = currentUserIsAdmin ? 'Admin' : 'Member';
+  }
+  const teamBtn = document.getElementById('dwr-team-btn');
+  const viewAsBtn = document.getElementById('dwr-viewas-btn');
+  if(teamBtn) teamBtn.style.display = currentUserIsAdmin ? '' : 'none';
+  if(viewAsBtn) viewAsBtn.style.display = currentUserIsAdmin ? '' : 'none';
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const darkLabel = document.getElementById('dwr-dark-label');
+  if(darkLabel) darkLabel.textContent = isDark ? 'Light mode' : 'Dark mode';
+  const cnt = (D.days[viewDate]?.tasks || []).filter(t=>t.status!=='done'&&t.status!=='dropped').length;
+  const c = document.getElementById('dwr-today-count');
+  if(c) c.textContent = cnt || '';
+  const t = document.getElementById('sp-track');
+  const a = document.getElementById('sp-artist');
+  const tt = document.getElementById('dms-track');
+  const aa = document.getElementById('dms-artist');
+  if(tt && t) tt.textContent = t.textContent;
+  if(aa && a) aa.textContent = a.textContent;
+}
+
+// ── MOBILE: status sheet ──
+let sheetTab = 'todo';
+function openMobileSheet(){
+  document.getElementById('mobile-sheet').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderMobileSheet();
+}
+function closeMobileSheet(){
+  document.getElementById('mobile-sheet').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function switchSheetTab(tab){
+  sheetTab = tab;
+  document.querySelectorAll('.sheet-tab').forEach(el => {
+    const isActive = (tab==='todo' && el.classList.contains('tab-todo')) ||
+                     (tab==='in_progress' && el.classList.contains('tab-progress')) ||
+                     (tab==='done' && el.classList.contains('tab-done'));
+    el.classList.toggle('active', isActive);
+  });
+  document.querySelectorAll('.sheet-page-dot').forEach(el => el.classList.remove('active'));
+  const dotId = tab==='in_progress' ? 'sheet-page-progress' : ('sheet-page-'+tab);
+  const dot = document.getElementById(dotId);
+  if(dot) dot.classList.add('active');
+  renderMobileSheet();
+}
+function renderMobileSheet(){
+  const dk = viewDate;
+  const tasks = (D.days[dk]?.tasks || []).filter(t => t.status !== 'dropped');
+  const buckets = { todo: [], in_progress: [], done: [] };
+  tasks.forEach(t => {
+    const s = (t.status === 'done') ? 'done'
+            : (t.status === 'in_progress' || t.status === 'waiting' || t.status === 'blocked') ? 'in_progress'
+            : 'todo';
+    buckets[s].push(t);
+  });
+  const cT=document.getElementById('sheet-count-todo');
+  const cP=document.getElementById('sheet-count-progress');
+  const cD=document.getElementById('sheet-count-done');
+  if(cT) cT.textContent = buckets.todo.length;
+  if(cP) cP.textContent = buckets.in_progress.length;
+  if(cD) cD.textContent = buckets.done.length;
+  const meta = document.getElementById('sheet-meta');
+  if(meta) meta.textContent = (tasks.length||0)+' '+(tasks.length===1?'task':'tasks');
+
+  const tagColors = { install:'#7C9CFF', service:'#5BA88C', athlete:'#A86E82', prod:'#EF9C7F', cert:'#888', ops:'#888' };
+  const inferTag = (t) => {
+    const tt = (t.text||t.title||'').toLowerCase();
+    if(tt.includes('install') || tt.includes('chamber') || tt.includes('proforma') || tt.includes('invoice') || tt.includes('monoplace')) return 'install';
+    if(tt.includes('cert') || tt.includes('renewal') || tt.includes('docs')) return 'cert';
+    if(tt.includes('athlete') || tt.includes('partner') || tt.includes('onboard')) return 'athlete';
+    if(tt.includes('prod') || tt.includes('calibrat') || tt.includes('sensor') || tt.includes('unit')) return 'prod';
+    return 'ops';
+  };
+  const initialsOf = (t) => {
+    const src = t.assigneeEmail || t.delegatedBy || (fbUser&&fbUser.email) || '';
+    if(!src) return 'ME';
+    const parts = src.split('@')[0].split(/[._-]/);
+    return ((parts[0][0]||'') + (parts[1]?.[0] || parts[0][1] || '')).toUpperCase();
+  };
+
+  const items = buckets[sheetTab] || [];
+  const list = document.getElementById('sheet-body');
+  if(!list) return;
+  if(!items.length){
+    list.innerHTML = `<div class="sheet-empty">${sheetTab==='done'?'Nothing done yet':sheetTab==='in_progress'?'Nothing in progress':'All clear'}</div>`;
+    return;
+  }
+  list.innerHTML = items.map(t => {
+    const tag = inferTag(t);
+    const tagColor = tagColors[tag] || '#888';
+    const isDone = t.status === 'done';
+    const dueRel = t.followUpAt ? new Date(t.followUpAt).toLocaleString('en',{hour:'2-digit',minute:'2-digit'}) : '';
+    return `<div class="sheet-card ${isDone?'is-done':''}" onclick="closeMobileSheet();openStatusModal('${dk}','${t.id}',null)">
+      <div class="sc-row">
+        <div class="sc-check ${isDone?'checked':''}" onclick="event.stopPropagation();toggleTaskDone('${t.id}');renderMobileSheet();">${isDone?'✓':''}</div>
+        <div class="sc-title">${esc(t.text||t.title||'(untitled)')}</div>
+      </div>
+      <div class="sc-meta">
+        <span class="sc-tag" style="background:${tagColor}1a;color:${tagColor}"><span class="sc-tag-dot" style="background:${tagColor}"></span>${tag.toUpperCase()}</span>
+        ${dueRel?`<span class="sc-due">${dueRel}</span>`:''}
+        <div class="sc-avatar">${initialsOf(t)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateMobileTopbarDate(){
+  const el = document.getElementById('mt-date');
+  if(!el) return;
+  const d = new Date(viewDate+'T12:00:00');
+  const day = d.toLocaleDateString('en',{weekday:'short'}).toUpperCase();
+  const date = d.toLocaleDateString('en',{day:'numeric',month:'short'}).toUpperCase();
+  el.textContent = `${day} · ${date}`;
+}
+
+function setListeningState(active, secs){
+  const bar = document.getElementById('input-bar');
+  if(!bar) return;
+  if(active){
+    bar.classList.add('is-listening');
+    if(typeof secs === 'number'){
+      const t = document.getElementById('voice-listening-time');
+      const m = String(Math.floor(secs/60)).padStart(2,'0');
+      const s = String(secs%60).padStart(2,'0');
+      if(t) t.textContent = `${m}:${s}`;
+    }
+  } else {
+    bar.classList.remove('is-listening');
+    const t = document.getElementById('voice-listening-time');
+    if(t) t.textContent = '00:00';
+  }
 }
 
 function updateWeeklyRail(){
