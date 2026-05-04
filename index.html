@@ -658,6 +658,89 @@ main{display:flex;flex:1;overflow:hidden;min-height:0;}
 #right-rail .sp-connect:hover{background:#1DB954;color:#fff;}
 
 @media(max-width:900px){#left{width:0 !important;min-width:0 !important;border:none;}#right-rail{display:none;}}
+/* ── HERO BLOCK ── */
+#hero-block{padding:28px 24px 18px;text-align:center;flex-shrink:0;border-bottom:1px solid var(--border);}
+#hero-kicker{font-family:var(--mono);font-size:10.5px;letter-spacing:1.6px;color:var(--brand);font-weight:600;text-transform:uppercase;margin-bottom:14px;}
+#hero-headline{font-size:34px;font-weight:500;line-height:1.18;letter-spacing:-1px;margin-bottom:18px;color:var(--text);}
+#hero-subtitle{color:var(--text-mid);font-weight:400;}
+#hero-stats{display:flex;align-items:center;justify-content:center;gap:14px;font-family:var(--mono);font-size:11.5px;letter-spacing:.6px;text-transform:uppercase;margin-bottom:14px;}
+.stat-pair{display:inline-flex;align-items:baseline;gap:6px;color:var(--text);}
+.stat-pair b{font-weight:700;font-size:13px;}
+.stat-pair.urgent b{color:var(--red);}
+.stat-lbl{color:var(--text-faint);font-weight:500;}
+.stat-sep{color:var(--text-faint);opacity:.5;}
+#hero-day-nav{display:flex;align-items:center;justify-content:center;gap:6px;}
+.nav-day-btn{background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:14px;padding:2px 6px;border-radius:6px;transition:all .12s;line-height:1;}
+.nav-day-btn:hover{color:var(--brand);background:var(--brand-light);}
+.date-badge{background:var(--brand-light);color:var(--brand);font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;font-family:var(--mono);}
+
+/* Body radial gradients (varianta B) */
+[data-theme="dark"] body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(239,156,127,.10) 0%, transparent 45%),
+    radial-gradient(ellipse at 90% 100%, rgba(168,110,130,.08) 0%, transparent 50%);
+}
+header,main{position:relative;z-index:1;}
+
+/* ── STATUS BOARD ── */
+#task-board-bar{display:flex;align-items:center;gap:10px;padding:10px 24px 6px;background:var(--bg);flex-shrink:0;}
+.tb-label{font-size:11px;font-weight:600;color:var(--text);font-family:var(--font);}
+.tb-meta{font-size:10.5px;color:var(--text-faint);font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase;}
+.tb-filter{font-family:var(--mono);font-size:10px;background:var(--bg);border:1px solid var(--border);color:var(--text-faint);padding:4px 10px;border-radius:6px;cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .15s;}
+.tb-filter:hover{border-color:var(--brand);color:var(--brand);}
+
+#status-board{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:8px 24px 18px;flex-shrink:0;}
+.board-col{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;min-height:120px;}
+.board-col-active{border-color:var(--brand-mid);box-shadow:0 0 0 1px var(--brand-mid);}
+.board-col-head{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;color:var(--text);margin-bottom:10px;}
+.col-dot{width:8px;height:8px;border-radius:2px;background:var(--text-faint);}
+.col-dot.active{background:var(--brand);}
+.col-dot.done{background:var(--text-faint);opacity:.5;}
+.col-count{margin-left:4px;font-family:var(--mono);font-size:10px;color:var(--text-faint);font-weight:500;}
+.col-name{flex-shrink:0;}
+.board-col-body{display:flex;flex-direction:column;gap:8px;}
+
+.board-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;transition:all .12s;}
+.board-card:hover{border-color:var(--border2);}
+.board-card.is-done{opacity:.55;}
+.board-card.is-done .bc-title{text-decoration:line-through;}
+.bc-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;}
+.bc-check{width:14px;height:14px;border:1.5px solid var(--border2);border-radius:4px;flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.bc-check.checked{background:var(--brand);border-color:var(--brand);color:#1C1816;font-size:9px;}
+.bc-title{font-size:12.5px;font-weight:500;color:var(--text);line-height:1.35;flex:1;word-break:break-word;}
+.bc-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.bc-tag{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:2px 6px;border-radius:4px;display:inline-flex;align-items:center;gap:4px;}
+.bc-tag .bc-tag-dot{width:6px;height:6px;border-radius:1px;}
+.bc-due{font-family:var(--mono);font-size:10px;color:var(--text-faint);letter-spacing:.4px;text-transform:uppercase;}
+.bc-avatar{width:18px;height:18px;border-radius:50%;background:var(--purple-light);color:var(--purple);font-size:9px;font-weight:700;font-family:var(--mono);display:flex;align-items:center;justify-content:center;flex-shrink:0;text-transform:uppercase;margin-left:auto;}
+
+.board-empty{font-size:11px;color:var(--text-faint);text-align:center;padding:14px 0;font-family:var(--mono);letter-spacing:.5px;}
+
+/* ── VIEW AS PICKER ── */
+#view-as-picker{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9999;}
+#view-as-picker.open{display:flex;}
+.vap-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px;width:340px;max-height:70vh;display:flex;flex-direction:column;}
+.vap-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px;}
+.vap-list{display:flex;flex-direction:column;gap:4px;overflow-y:auto;}
+.vap-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:all .12s;background:none;color:var(--text);font-family:var(--font);font-size:13px;text-align:left;width:100%;}
+.vap-item:hover{background:var(--bg);border-color:var(--border);}
+.vap-item.current{border-color:var(--brand);background:var(--brand-light);}
+.vap-avatar{width:26px;height:26px;border-radius:50%;background:var(--purple-light);color:var(--purple);font-size:10px;font-weight:700;font-family:var(--mono);display:flex;align-items:center;justify-content:center;flex-shrink:0;text-transform:uppercase;}
+.vap-info{flex:1;min-width:0;}
+.vap-name{font-weight:500;}
+.vap-email{font-size:11px;color:var(--text-faint);font-family:var(--mono);}
+.vap-close{margin-top:12px;background:none;border:1px solid var(--border);color:var(--text-mid);padding:8px;border-radius:8px;cursor:pointer;font-size:12px;font-family:var(--font);}
+.vap-close:hover{border-color:var(--brand);color:var(--brand);}
+
+#viewing-as-banner{display:none;background:var(--brand-light);border-bottom:1px solid var(--brand-mid);padding:7px 24px;font-family:var(--mono);font-size:11px;color:var(--brand);text-align:center;letter-spacing:.5px;}
+#viewing-as-banner.visible{display:block;}
+#viewing-as-banner button{background:none;border:none;color:var(--brand);text-decoration:underline;cursor:pointer;font-family:var(--mono);font-size:11px;margin-left:8px;}
+
+@media(max-width:900px){
+  #hero-headline{font-size:24px;}
+  #status-board{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
@@ -895,6 +978,20 @@ main{display:flex;flex:1;overflow:hidden;min-height:0;}
   </div>
 </div>
 
+<!-- VIEW AS BANNER -->
+<div id="viewing-as-banner">
+  Viewing as <b id="viewing-as-name">—</b> <button onclick="exitViewAs()">Exit</button>
+</div>
+
+<!-- VIEW AS PICKER -->
+<div id="view-as-picker" onclick="if(event.target===this)closeViewAsPicker()">
+  <div class="vap-card">
+    <div class="vap-title">View tasks as…</div>
+    <div class="vap-list" id="vap-list">Loading…</div>
+    <button class="vap-close" onclick="closeViewAsPicker()">Cancel</button>
+  </div>
+</div>
+
 <main>
   <!-- ── LEFT NAV RAIL ── -->
   <aside id="left">
@@ -913,6 +1010,13 @@ main{display:flex;flex:1;overflow:hidden;min-height:0;}
         <span>↗</span><span>Reports</span>
       </button>
     </div>
+    <!-- Admin-only "View as" selector -->
+    <div id="view-as-section" class="nav-section" style="display:none;margin-bottom:12px;">
+      <div class="nav-sep-label" style="padding:0 10px 4px;">View as</div>
+      <button class="nav-item" id="view-as-btn" onclick="openViewAsPicker()" style="font-family:var(--mono);font-size:11px;">
+        <span style="opacity:.6">↔</span><span id="view-as-label">Self</span>
+      </button>
+    </div>
     <div class="nav-sep-label">Spaces</div>
     <div class="nav-section">
       <button class="nav-item">
@@ -928,15 +1032,29 @@ main{display:flex;flex:1;overflow:hidden;min-height:0;}
 
   <!-- ── CENTER MAIN ── -->
   <section id="center-main">
-    <!-- Greeting + ring + date nav -->
-    <div id="center-header">
-      <span id="greeting-text">Good morning.</span>
-      <div id="greeting-meta">
+    <!-- Hero block: kicker + headline + stat row -->
+    <div id="hero-block">
+      <div id="hero-kicker"><span id="hero-kicker-label">THE FIRST BREATH</span> · <span id="hero-time">—</span></div>
+      <h1 id="hero-headline">
+        <span id="hero-greeting">Good morning.</span><br>
+        <span id="hero-subtitle">Three breaths to clear, two to start.</span>
+      </h1>
+      <div id="hero-stats">
+        <span class="stat-pair"><b id="stat-open">0</b> <span class="stat-lbl">open</span></span>
+        <span class="stat-sep">·</span>
+        <span class="stat-pair"><b id="stat-done">0</b> <span class="stat-lbl">done</span></span>
+        <span class="stat-sep">·</span>
+        <span class="stat-pair urgent"><b id="stat-urgent">0</b> <span class="stat-lbl">urgent</span></span>
+        <span class="stat-sep">·</span>
+        <span class="stat-pair"><b id="stat-week">0h</b> <span class="stat-lbl">wk</span></span>
+      </div>
+      <div id="hero-day-nav">
         <button onclick="navigateDay(-1)" class="nav-day-btn">‹</button>
         <span class="date-badge" id="panel-date" onclick="toggleDatePicker()" style="cursor:pointer">—</span>
         <button onclick="navigateDay(1)" class="nav-day-btn">›</button>
       </div>
-      <div class="ring-wrap">
+      <!-- Hidden ring (kept in DOM so renderTasks doesn't break) -->
+      <div style="display:none">
         <svg class="ring-svg" viewBox="0 0 52 52">
           <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" style="stop-color:#e8a07a"/>
@@ -945,15 +1063,14 @@ main{display:flex;flex:1;overflow:hidden;min-height:0;}
           <circle class="ring-bg" cx="26" cy="26" r="22"/>
           <circle class="ring-fill" id="ring-fill" cx="26" cy="26" r="22" stroke-dasharray="138.2" stroke-dashoffset="138.2"/>
           <text x="26" y="23"><tspan class="ring-pct" id="ring-pct" x="26">0%</tspan></text>
-          <text x="26" y="34"><tspan class="ring-lbl" x="26">DONE</tspan></text>
         </svg>
-        <div class="ring-stats" id="ring-stats"><div><b>0</b> done</div><div><b>0</b> in lucru</div></div>
+        <div id="ring-stats"></div>
       </div>
     </div>
     <div id="date-picker-wrap" style="display:none;">
       <input type="date" id="view-date" onchange="changeViewDate(this.value)"
-        style="width:100%;background:var(--bg);border:1.5px solid var(--border);color:var(--text);font-family:var(--mono);font-size:12px;padding:7px 10px;outline:none;border-radius:var(--radius-sm);">
-      <div id="days-with-data" style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;"></div>
+        style="width:280px;background:var(--bg);border:1.5px solid var(--border);color:var(--text);font-family:var(--mono);font-size:12px;padding:7px 10px;outline:none;border-radius:var(--radius-sm);">
+      <div id="days-with-data" style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;justify-content:center;"></div>
     </div>
 
     <!-- Chat messages -->
@@ -991,12 +1108,29 @@ main{display:flex;flex:1;overflow:hidden;min-height:0;}
       <button id="send-btn" onclick="handleSend()">↑</button>
     </div>
 
-    <!-- Task list below chat -->
+    <!-- Status board: 3 columns -->
     <div id="task-board-bar">
       <span class="tb-label">All today</span>
       <span class="tb-meta" id="tb-meta"></span>
+      <div style="flex:1;height:1px;background:var(--border);margin:0 12px;"></div>
+      <button class="tb-filter">Filter</button>
     </div>
-    <div id="task-scroll"></div>
+    <div id="status-board">
+      <div class="board-col" data-status="todo">
+        <div class="board-col-head"><span class="col-dot"></span><span class="col-name">To do</span> <span class="col-count" id="col-count-todo">0</span></div>
+        <div class="board-col-body" id="board-todo"></div>
+      </div>
+      <div class="board-col board-col-active" data-status="in_progress">
+        <div class="board-col-head"><span class="col-dot active"></span><span class="col-name">In progress</span> <span class="col-count" id="col-count-progress">0</span></div>
+        <div class="board-col-body" id="board-progress"></div>
+      </div>
+      <div class="board-col" data-status="done">
+        <div class="board-col-head"><span class="col-dot done"></span><span class="col-name">Done</span> <span class="col-count" id="col-count-done">0</span></div>
+        <div class="board-col-body" id="board-done"></div>
+      </div>
+    </div>
+    <!-- Hidden legacy task scroll (notif sections still write here) -->
+    <div id="task-scroll" style="display:none"></div>
     <div id="notif-section-container"></div>
   </section>
 
@@ -1751,6 +1885,8 @@ function renderTasks(){
 
   // Update greeting
   updateGreeting();
+  updateHeroStats();
+  renderStatusBoard();
 
   // Update weekly rail stats
   updateWeeklyRail();
@@ -4438,12 +4574,212 @@ function updateDT(){
 let appInitialized = false;
 
 function updateGreeting(){
-  const el = document.getElementById('greeting-text');
-  if(!el) return;
-  const h = new Date().getHours();
+  const kickerLabel = document.getElementById('hero-kicker-label');
+  const heroTime = document.getElementById('hero-time');
+  const heroGreeting = document.getElementById('hero-greeting');
+  const heroSubtitle = document.getElementById('hero-subtitle');
+  if(!heroGreeting) return;
+  const now = new Date();
+  const h = now.getHours();
   const tod = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+  const breathLabel = h < 12 ? 'THE FIRST BREATH' : h < 17 ? 'MIDDAY MARK' : 'LAST BREATH';
+  if(kickerLabel) kickerLabel.textContent = breathLabel;
+  if(heroTime) heroTime.textContent = now.toTimeString().slice(0,5);
   const name = (fbUser && fbUser.displayName) ? fbUser.displayName.split(' ')[0] : '';
-  el.textContent = `Good ${tod}${name ? ', '+name : ''}.`;
+  heroGreeting.textContent = `Good ${tod}${name ? ', '+name : ''}.`;
+  const total = (D.days[viewDate]?.tasks || []).length;
+  const pending = (D.days[viewDate]?.tasks || []).filter(t=>t.status!=='done'&&t.status!=='dropped').length;
+  if(heroSubtitle){
+    if(!total) heroSubtitle.textContent = 'A clear slate. What\'s first?';
+    else if(pending === 0) heroSubtitle.textContent = 'Everything is done. Take a breath.';
+    else heroSubtitle.textContent = `${pending} ${pending===1?'thing':'things'} to clear, ${total-pending} done.`;
+  }
+}
+
+function updateHeroStats(){
+  const dk = viewDate;
+  const tasks = D.days[dk]?.tasks || [];
+  const done = tasks.filter(t=>t.status==='done').length;
+  const open = tasks.filter(t=>t.status!=='done'&&t.status!=='dropped').length;
+  const urgent = tasks.filter(t=>t.priority==='urgent' || t.priority==='high').length;
+  let weekTasks = 0;
+  Object.entries(D.days||{}).forEach(([dkk, day])=>{
+    const d = new Date(dkk+'T12:00:00');
+    const now = new Date();
+    const dow = now.getDay();
+    const monday = new Date(now); monday.setDate(now.getDate() - (dow===0?6:dow-1));
+    if(d >= monday && d <= now) weekTasks += (day.tasks||[]).length;
+  });
+  const weekH = (weekTasks * 0.5).toFixed(1);
+  const sO=document.getElementById('stat-open');
+  const sD=document.getElementById('stat-done');
+  const sU=document.getElementById('stat-urgent');
+  const sW=document.getElementById('stat-week');
+  if(sO) sO.textContent = open;
+  if(sD) sD.textContent = done;
+  if(sU) sU.textContent = urgent;
+  if(sW) sW.textContent = weekH+'h';
+}
+
+function statusForBoard(t){
+  if(t.status === 'done') return 'done';
+  if(t.status === 'in_progress' || t.status === 'waiting' || t.status === 'blocked') return 'in_progress';
+  return 'todo';
+}
+
+function renderStatusBoard(){
+  const dk = viewDate;
+  const tasks = (D.days[dk]?.tasks || []).filter(t => t.status !== 'dropped');
+  const buckets = { todo: [], in_progress: [], done: [] };
+  tasks.forEach(t => buckets[statusForBoard(t)].push(t));
+
+  const tagColors = {
+    install:'#7C9CFF', service:'#5BA88C', athlete:'#A86E82',
+    prod:'#EF9C7F', cert:'#888', ops:'#888'
+  };
+  const inferTag = (t) => {
+    const tt = (t.title||'').toLowerCase();
+    if(tt.includes('install') || tt.includes('chamber') || tt.includes('proforma') || tt.includes('invoice')) return 'install';
+    if(tt.includes('cert') || tt.includes('renewal') || tt.includes('docs')) return 'cert';
+    if(tt.includes('athlete') || tt.includes('partner') || tt.includes('onboard')) return 'athlete';
+    if(tt.includes('prod') || tt.includes('calibrat') || tt.includes('sensor') || tt.includes('unit')) return 'prod';
+    return 'ops';
+  };
+  const initialsOf = (t) => {
+    const src = t.assigneeEmail || t.delegatedBy || (fbUser&&fbUser.email) || '';
+    if(!src) return 'ME';
+    const parts = src.split('@')[0].split(/[._-]/);
+    return ((parts[0][0]||'') + (parts[1]?.[0] || parts[0][1] || '')).toUpperCase();
+  };
+  const cardHtml = (t) => {
+    const tag = inferTag(t);
+    const tagColor = tagColors[tag] || '#888';
+    const dueRel = t.followUpAt ? new Date(t.followUpAt).toLocaleString('en',{hour:'2-digit',minute:'2-digit'}) : '';
+    const isDone = t.status === 'done';
+    return `<div class="board-card ${isDone?'is-done':''}" onclick="openTaskInChat('${t.id}')">
+      <div class="bc-top">
+        <div class="bc-check ${isDone?'checked':''}" onclick="event.stopPropagation();toggleTaskDone('${t.id}')">${isDone?'✓':''}</div>
+        <div class="bc-title">${esc(t.title)}</div>
+      </div>
+      <div class="bc-meta">
+        <span class="bc-tag" style="background:${tagColor}1a;color:${tagColor};"><span class="bc-tag-dot" style="background:${tagColor}"></span>${tag.toUpperCase()}</span>
+        ${dueRel?`<span class="bc-due">${dueRel}</span>`:''}
+        <div class="bc-avatar">${initialsOf(t)}</div>
+      </div>
+    </div>`;
+  };
+  ['todo','in_progress','done'].forEach(s => {
+    const colId = s==='in_progress' ? 'board-progress' : ('board-'+s);
+    const el = document.getElementById(colId);
+    if(!el) return;
+    const items = buckets[s];
+    el.innerHTML = items.length ? items.map(cardHtml).join('') : `<div class="board-empty">${s==='done'?'Nothing yet':s==='in_progress'?'Idle':'All clear'}</div>`;
+    const countId = s==='in_progress' ? 'col-count-progress' : ('col-count-'+s);
+    const c = document.getElementById(countId);
+    if(c) c.textContent = items.length;
+  });
+}
+
+function toggleTaskDone(taskId){
+  const dk = viewDate;
+  const day = D.days[dk]; if(!day) return;
+  const t = day.tasks.find(x=>x.id===taskId); if(!t) return;
+  t.status = t.status === 'done' ? 'todo' : 'done';
+  t.updatedAt = new Date().toISOString();
+  saveData();
+  renderTasks();
+  if(t.delegatedBy){
+    syncStatusToAssigner(t).catch(e => console.warn('Status sync failed:', e));
+  }
+}
+
+function openTaskInChat(taskId){
+  document.getElementById('chat-msgs')?.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function syncStatusToAssigner(task){
+  if(!fbDb || !task || !task.delegatedBy || !task.delegatedById) return;
+  try{
+    const ref = fbDb.collection('users').doc(task.delegatedById);
+    const doc = await ref.get();
+    if(!doc.exists) return;
+    const data = JSON.parse(doc.data().data || '{"days":{}}');
+    if(!data.assignedToOthers) data.assignedToOthers = {};
+    if(data.assignedToOthers[task.id]){
+      data.assignedToOthers[task.id].status = task.status;
+      data.assignedToOthers[task.id].updatedAt = task.updatedAt;
+      if(task.status === 'done') data.assignedToOthers[task.id].completedAt = task.updatedAt;
+      await ref.set({ data: JSON.stringify(data), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, {merge:true});
+    }
+  }catch(e){ console.warn('syncStatusToAssigner:', e.message); }
+}
+
+let viewAsUid = null;
+let viewAsData = null;
+
+async function openViewAsPicker(){
+  const list = document.getElementById('vap-list');
+  list.innerHTML = 'Loading…';
+  document.getElementById('view-as-picker').classList.add('open');
+  try{
+    const snap = await fbDb.collection('users').get();
+    const items = [];
+    snap.forEach(doc => {
+      const d = doc.data();
+      if(doc.id === fbUser.uid) return;
+      items.push({ uid: doc.id, email: d.email || doc.id, name: d.displayName || (d.email||'').split('@')[0] });
+    });
+    items.sort((a,b)=>a.name.localeCompare(b.name));
+    list.innerHTML = '';
+    const selfBtn = document.createElement('button');
+    selfBtn.className = 'vap-item' + (viewAsUid===null?' current':'');
+    selfBtn.innerHTML = `<div class="vap-avatar">ME</div><div class="vap-info"><div class="vap-name">Myself</div><div class="vap-email">${esc(fbUser.email||'')}</div></div>`;
+    selfBtn.onclick = () => { exitViewAs(); closeViewAsPicker(); };
+    list.appendChild(selfBtn);
+    items.forEach(it => {
+      const initials = (it.name||it.email).split(/[\s._-]/).slice(0,2).map(p=>p[0]||'').join('').toUpperCase().slice(0,2);
+      const btn = document.createElement('button');
+      btn.className = 'vap-item' + (viewAsUid===it.uid?' current':'');
+      btn.innerHTML = `<div class="vap-avatar">${initials}</div><div class="vap-info"><div class="vap-name">${esc(it.name)}</div><div class="vap-email">${esc(it.email)}</div></div>`;
+      btn.onclick = () => enterViewAs(it.uid, it.email, it.name);
+      list.appendChild(btn);
+    });
+  }catch(e){
+    list.innerHTML = '<div style="padding:12px;color:var(--text-faint);font-size:12px;">Unable to load users.</div>';
+  }
+}
+
+function closeViewAsPicker(){ document.getElementById('view-as-picker').classList.remove('open'); }
+
+async function enterViewAs(uid, email, name){
+  closeViewAsPicker();
+  try{
+    const doc = await fbDb.collection('users').doc(uid).get();
+    if(!doc.exists || !doc.data().data){
+      alert('That user has no data yet.');
+      return;
+    }
+    viewAsUid = uid;
+    viewAsData = JSON.parse(doc.data().data);
+    window._origD = D;
+    D = viewAsData;
+    document.getElementById('viewing-as-name').textContent = name || email;
+    document.getElementById('viewing-as-banner').classList.add('visible');
+    document.getElementById('view-as-label').textContent = (name || email.split('@')[0]).slice(0,12);
+    renderTasks();
+  }catch(e){
+    console.warn(e);
+    alert('Cannot view that account.');
+  }
+}
+
+function exitViewAs(){
+  if(window._origD){ D = window._origD; window._origD = null; }
+  viewAsUid = null;
+  viewAsData = null;
+  document.getElementById('viewing-as-banner').classList.remove('visible');
+  document.getElementById('view-as-label').textContent = 'Self';
+  renderTasks();
 }
 
 function updateWeeklyRail(){
@@ -4539,11 +4875,19 @@ async function initApp(){
       if(isAdmin){
         const btn = document.getElementById('team-brief-btn');
         if(btn) btn.style.display = '';
+        const navTeam = document.getElementById('nav-team-btn');
+        if(navTeam) navTeam.style.display = '';
+        const viewAs = document.getElementById('view-as-section');
+        if(viewAs) viewAs.style.display = '';
         // Auto-open on Sunday (0 = Sunday)
         const day = new Date().getDay();
         if(day === 0 && chatUIHistory.length === 0){
           setTimeout(() => openTeamBrief(), 1200);
         }
+      } else {
+        // Non-admins: hide right rail Activity section (keep Spotify + Weekly)
+        const rail = document.getElementById('rail-activity');
+        if(rail) rail.parentElement.style.display = 'none';
       }
     });
   }
