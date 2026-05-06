@@ -437,20 +437,16 @@ main{display:flex;flex:1;overflow:hidden;min-height:0;}
      ══════════════════════════════════════════════════════ */
 
   /* ── HEADER: hamburger + brand center + sheet trigger ── */
+  /* ── HEADER: hide ALL desktop children, show only mobile elements ── */
   header{padding:0 14px;height:54px;gap:10px;overflow:hidden;background:var(--bg);border-bottom:1px solid var(--border);position:relative;z-index:50;}
-  /* Hide everything in header by default */
-  .logo-wordmark,.header-sep,#dt,.ai-badge,#spotify-widget,
-  .btn-hdr.ghost[onclick*="openEOD"],
-  .btn-hdr.ghost[onclick*="openTeamBrief"],
-  .btn-hdr[onclick*="openReports"],
-  #btn-key,
-  #sidebar-resize,
-  #push-bell-btn,#push-status-btn,
-  .user-name,
-  .qs-btn{display:none!important;}
+  /* Hide ALL direct children of header by default */
+  header > *{display:none!important;}
+  /* Re-show only the mobile-specific header parts */
+  header > .hdr-mobile-l,
+  header > .hdr-mobile-c,
+  header > .hdr-mobile-r{display:flex!important;align-items:center;}
 
   /* New mobile header structure */
-  .hdr-mobile-l,.hdr-mobile-c,.hdr-mobile-r{display:flex;align-items:center;}
   .hdr-mobile-l{position:absolute;left:14px;top:50%;transform:translateY(-50%);}
   .hdr-mobile-r{position:absolute;right:14px;top:50%;transform:translateY(-50%);}
   .hdr-mobile-c{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--font);font-weight:600;font-size:15px;color:var(--text);gap:6px;letter-spacing:-.2px;}
@@ -458,14 +454,14 @@ main{display:flex;flex:1;overflow:hidden;min-height:0;}
   .hdr-icon-btn{width:36px;height:36px;border-radius:9px;border:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:center;color:var(--text);cursor:pointer;padding:0;transition:all .15s;}
   .hdr-icon-btn:active{background:var(--brand-light);border-color:var(--brand-mid);}
   .hdr-icon-btn svg{width:18px;height:18px;}
-  /* user-btn becomes part of right side */
-  .user-btn{padding:0!important;width:36px;height:36px;background:var(--bg2)!important;border:1px solid var(--border);border-radius:9px;}
-  .user-btn .user-avatar{width:24px;height:24px;font-size:10px;}
 
-  /* ── LAYOUT: hide desktop rails ── */
+  /* ── LAYOUT: hide desktop rails + status board ── */
   #left{display:none!important;}
   #right-rail{display:none!important;}
   #sidebar-rail{display:none!important;}
+  #task-board-bar{display:none!important;}
+  #status-board{display:none!important;}
+  #viewing-as-banner{display:none!important;}
   #center-main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);min-height:0;}
 
   /* ── HERO: kicker + headline + stat rows ── */
@@ -803,8 +799,8 @@ header,main{position:relative;z-index:1;}
 .tb-filter{font-family:var(--mono);font-size:10px;background:var(--bg);border:1px solid var(--border);color:var(--text-faint);padding:4px 10px;border-radius:6px;cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .15s;}
 .tb-filter:hover{border-color:var(--brand);color:var(--brand);}
 
-#status-board{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:8px 24px 18px;flex-shrink:0;}
-.board-col{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;flex-direction:column;min-height:120px;overflow:hidden;}
+#status-board{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:8px 24px 18px;flex-shrink:0;height:240px;min-height:140px;max-height:75vh;resize:vertical;overflow:auto;}
+.board-col{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
 .board-col-active{border-color:var(--brand-mid);box-shadow:0 0 0 1px var(--brand-mid);}
 .board-col-head{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;color:var(--text);margin-bottom:10px;flex-shrink:0;}
 .col-dot{width:8px;height:8px;border-radius:2px;background:var(--text-faint);}
@@ -812,7 +808,7 @@ header,main{position:relative;z-index:1;}
 .col-dot.done{background:var(--text-faint);opacity:.5;}
 .col-count{margin-left:4px;font-family:var(--mono);font-size:10px;color:var(--text-faint);font-weight:500;}
 .col-name{flex-shrink:0;}
-.board-col-body{display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:190px;}
+.board-col-body{display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1;min-height:0;}
 
 .board-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;transition:all .12s;}
 .board-card:hover{border-color:var(--border2);}
@@ -862,63 +858,6 @@ header,main{position:relative;z-index:1;}
 @media(max-width:900px){
   #viewing-as-banner{padding:7px 14px;font-size:10px;}
 }
-
-/* ── GLOBAL FIXES ── */
-/* Old mobile topbar replaced by .hdr-mobile-l/c/r inside <header> */
-#mobile-topbar{display:none!important;}
-/* Voice bar hidden globally; shown only when #input-bar.is-listening */
-.voice-listening-bar{display:none;}
-/* slideUp keyframe must live outside @media for cross-browser reliability */
-@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
-
-/* ════════════════════════════════════════════════════════════════
-   MOBILE MASTER OVERRIDES — placed last to win CSS cascade order.
-   The earlier @media(max-width:768px) block at line ~430 was being
-   overridden by desktop rules defined AFTER it (e.g. #status-board
-   at line ~806). These !important rules ensure mobile wins.
-   ════════════════════════════════════════════════════════════════ */
-@media(max-width:768px){
-  /* ── Hide all desktop header chrome ── */
-  header > .logo,
-  header > .header-sep,
-  header > #dt,
-  header > .hdr-right{display:none!important;}
-
-  /* ── Hide home-screen chrome that belongs in drawer/sheet ── */
-  #chips{display:none!important;}
-  #assignee-row{display:none!important;}
-  #task-board-bar{display:none!important;}
-  #status-board{display:none!important;}
-  #mobile-task-strip{display:none!important;}
-  #hero-day-nav{display:none!important;}
-
-  /* ── Hide the rainbow language flag (not in OxyHelp palette) ── */
-  #mic-lang-btn{display:none!important;}
-
-  /* ── Mobile header: date in mono caps, no Cockpit pill ── */
-  .hdr-mobile-c{
-    font-family:var(--mono)!important;
-    font-weight:500!important;
-    font-size:10.5px!important;
-    letter-spacing:1.4px!important;
-    color:var(--text-faint)!important;
-    text-transform:uppercase;
-  }
-
-  /* ── Hero copy refinements ── */
-  #hero-subtitle{color:var(--text-mid);font-weight:400;}
-  #hero-stats{color:var(--text-mid);}
-  .stat-pair.urgent b{color:#FE3B2B;}
-
-  /* ── Sticky input bar (belt-and-suspenders) ── */
-  #input-bar{
-    position:sticky!important;
-    bottom:0!important;
-    z-index:30!important;
-    background:var(--bg2)!important;
-    border-top:1px solid var(--border)!important;
-  }
-}
 </style>
 </head>
 <body>
@@ -931,7 +870,11 @@ header,main{position:relative;z-index:1;}
     </button>
   </div>
   <div class="hdr-mobile-c">
-    <span id="hdr-mobile-date">—</span>
+    <svg class="brand-mark" viewBox="0 0 352 349" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="303" cy="300" r="40" fill="none" stroke="#EF9C7F" stroke-width="20"/>
+      <circle cx="143" cy="143" r="115" fill="none" stroke="#EF9C7F" stroke-width="40"/>
+    </svg>
+    <span>Cockpit</span>
   </div>
   <div class="hdr-mobile-r">
     <button class="hdr-icon-btn" onclick="openMobileSheet()" aria-label="Tasks">
@@ -1313,7 +1256,7 @@ header,main{position:relative;z-index:1;}
     <div id="input-bar">
       <button id="attach-btn" onclick="document.getElementById('attach-input').click()" title="Attach image">📎</button>
       <input type="file" id="attach-input" accept="image/*" style="display:none" onchange="handleAttach(event)">
-      <textarea id="chat-in" rows="1" placeholder="Ask, assign, schedule…"></textarea>
+      <textarea id="chat-in" rows="1" placeholder="Just lay it on me — we can do it together."></textarea>
       <div class="voice-listening-bar">
         <div class="voice-waves"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
         <span class="voice-listening-text">Listening</span>
@@ -4944,17 +4887,9 @@ function updateGreeting(){
   const total = (D.days[viewDate]?.tasks || []).length;
   const pending = (D.days[viewDate]?.tasks || []).filter(t=>t.status!=='done'&&t.status!=='dropped').length;
   if(heroSubtitle){
-    const numWords = ['Zero','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen','Twenty'];
-    const wordOf = (n) => numWords[n] || String(n);
     if(!total) heroSubtitle.textContent = 'A clear slate. What\'s first?';
     else if(pending === 0) heroSubtitle.textContent = 'Everything is done. Take a breath.';
-    else heroSubtitle.textContent = `${wordOf(pending)} ${pending===1?'breath':'breaths'} to clear.`;
-  }
-  const hdrDate = document.getElementById('hdr-mobile-date');
-  if(hdrDate){
-    const day = now.toLocaleDateString('en',{weekday:'short'}).toUpperCase();
-    const date = now.toLocaleDateString('en',{day:'numeric',month:'short'}).toUpperCase();
-    hdrDate.textContent = `${day} · ${date}`;
+    else heroSubtitle.textContent = `${pending} ${pending===1?'thing':'things'} to clear, ${total-pending} done.`;
   }
 }
 
