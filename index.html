@@ -832,6 +832,15 @@ header,main{position:relative;z-index:1;}
 
 .board-empty{font-size:11px;color:var(--text-faint);text-align:center;padding:14px 0;font-family:var(--mono);letter-spacing:.5px;}
 
+/* Overdue / carried-over indicators */
+.bc-badge{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:2px 6px;border-radius:4px;display:inline-flex;align-items:center;gap:4px;}
+.bc-badge-over{background:rgba(254,59,43,.12);color:var(--red);border:1px solid rgba(254,59,43,.25);}
+.bc-badge-carry{background:rgba(168,110,130,.14);color:#c997a4;border:1px solid rgba(168,110,130,.25);}
+.board-card.is-overdue{border-color:rgba(254,59,43,.35);}
+.board-card.is-carried{border-color:rgba(168,110,130,.3);}
+.sheet-card.is-overdue{border-color:rgba(254,59,43,.35);}
+.sheet-card.is-carried{border-color:rgba(168,110,130,.3);}
+
 /* ── VIEW AS PICKER ── */
 #view-as-picker{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9999;}
 #view-as-picker.open{display:flex;}
@@ -4887,10 +4896,18 @@ function updateGreeting(){
 
 function updateHeroStats(){
   const dk = viewDate;
-  const tasks = D.days[dk]?.tasks || [];
-  const done = tasks.filter(t=>t.status==='done').length;
-  const open = tasks.filter(t=>t.status!=='done'&&t.status!=='dropped').length;
-  const urgent = tasks.filter(t=>t.priority==='urgent' || t.priority==='high').length;
+  const tasksToday = D.days[dk]?.tasks || [];
+  const carried = getDueOnDateFromOtherDays(dk);
+  const all = [...tasksToday, ...carried];
+  const done = all.filter(t=>t.status==='done').length;
+  const open = all.filter(t=>t.status!=='done'&&t.status!=='dropped').length;
+  // Urgent = explicitly urgent/high priority OR overdue (carried from past days)
+  const urgent = all.filter(t => {
+    if(t.status==='done'||t.status==='dropped') return false;
+    if(t.priority==='urgent'||t.priority==='high') return true;
+    if(typeof isOverdue === 'function' && isOverdue(t)) return true;
+    return false;
+  }).length;
   let weekTasks = 0;
   Object.entries(D.days||{}).forEach(([dkk, day])=>{
     const d = new Date(dkk+'T12:00:00');
@@ -4919,8 +4936,11 @@ function statusForBoard(t){
 function renderStatusBoard(){
   const dk = viewDate;
   const tasks = (D.days[dk]?.tasks || []).filter(t => t.status !== 'dropped');
+  // Include tasks carried forward from other days (overdue + scheduled)
+  const carried = getDueOnDateFromOtherDays(dk);
+  const allTasks = [...tasks, ...carried];
   const buckets = { todo: [], in_progress: [], done: [] };
-  tasks.forEach(t => buckets[statusForBoard(t)].push(t));
+  allTasks.forEach(t => buckets[statusForBoard(t)].push(t));
 
   const tagColors = {
     install:'#7C9CFF', service:'#5BA88C', athlete:'#A86E82',
@@ -4945,13 +4965,20 @@ function renderStatusBoard(){
     const tagColor = tagColors[tag] || '#888';
     const dueRel = t.followUpAt ? new Date(t.followUpAt).toLocaleString('en',{hour:'2-digit',minute:'2-digit'}) : '';
     const isDone = t.status === 'done';
-    return `<div class="board-card ${isDone?'is-done':''}" onclick="openStatusModal('${dk}','${t.id}',null)">
+    const isOver = (typeof isOverdue === 'function') && isOverdue(t);
+    const isCarried = !!t._sourceDk; // marker added by getDueOnDateFromOtherDays
+    const sourceDk = t._sourceDk || dk; // use original day for modal
+    let badgeHtml = '';
+    if(isOver) badgeHtml = '<span class="bc-badge bc-badge-over">Overdue</span>';
+    else if(isCarried) badgeHtml = `<span class="bc-badge bc-badge-carry">↩ ${t._carryReason==='followup'?'Scheduled':'Carried'}</span>`;
+    return `<div class="board-card ${isDone?'is-done':''} ${isOver?'is-overdue':''} ${isCarried?'is-carried':''}" onclick="openStatusModal('${sourceDk}','${t.id}',null)">
       <div class="bc-top">
-        <div class="bc-check ${isDone?'checked':''}" onclick="event.stopPropagation();toggleTaskDone('${t.id}')">${isDone?'✓':''}</div>
+        <div class="bc-check ${isDone?'checked':''}" onclick="event.stopPropagation();toggleTaskDoneFor('${sourceDk}','${t.id}')">${isDone?'✓':''}</div>
         <div class="bc-title">${esc(t.text||t.title||'(untitled)')}</div>
       </div>
       <div class="bc-meta">
         <span class="bc-tag" style="background:${tagColor}1a;color:${tagColor};"><span class="bc-tag-dot" style="background:${tagColor}"></span>${tag.toUpperCase()}</span>
+        ${badgeHtml}
         ${dueRel?`<span class="bc-due">${dueRel}</span>`:''}
         <div class="bc-avatar">${initialsOf(t)}</div>
       </div>
@@ -4970,9 +4997,21 @@ function renderStatusBoard(){
 }
 
 function toggleTaskDone(taskId){
-  const dk = viewDate;
-  const day = D.days[dk]; if(!day) return;
-  const t = day.tasks.find(x=>x.id===taskId); if(!t) return;
+  toggleTaskDoneFor(viewDate, taskId);
+}
+
+function toggleTaskDoneFor(dk, taskId){
+  // Try requested day first, then fall back to scanning all days (for carried tasks)
+  let day = D.days[dk];
+  let t = day && day.tasks ? day.tasks.find(x=>x.id===taskId) : null;
+  if(!t){
+    // Search all days
+    for(const [otherDk, otherDay] of Object.entries(D.days||{})){
+      const found = (otherDay.tasks||[]).find(x=>x.id===taskId);
+      if(found){ t = found; break; }
+    }
+  }
+  if(!t) return;
   t.status = t.status === 'done' ? 'todo' : 'done';
   t.updatedAt = new Date().toISOString();
   saveData();
@@ -5140,8 +5179,10 @@ function switchSheetTab(tab){
 function renderMobileSheet(){
   const dk = viewDate;
   const tasks = (D.days[dk]?.tasks || []).filter(t => t.status !== 'dropped');
+  const carried = getDueOnDateFromOtherDays(dk);
+  const allTasks = [...tasks, ...carried];
   const buckets = { todo: [], in_progress: [], done: [] };
-  tasks.forEach(t => {
+  allTasks.forEach(t => {
     const s = (t.status === 'done') ? 'done'
             : (t.status === 'in_progress' || t.status === 'waiting' || t.status === 'blocked') ? 'in_progress'
             : 'todo';
@@ -5154,7 +5195,7 @@ function renderMobileSheet(){
   if(cP) cP.textContent = buckets.in_progress.length;
   if(cD) cD.textContent = buckets.done.length;
   const meta = document.getElementById('sheet-meta');
-  if(meta) meta.textContent = (tasks.length||0)+' '+(tasks.length===1?'task':'tasks');
+  if(meta) meta.textContent = (allTasks.length||0)+' '+(allTasks.length===1?'task':'tasks');
 
   const tagColors = { install:'#7C9CFF', service:'#5BA88C', athlete:'#A86E82', prod:'#EF9C7F', cert:'#888', ops:'#888' };
   const inferTag = (t) => {
@@ -5184,13 +5225,20 @@ function renderMobileSheet(){
     const tagColor = tagColors[tag] || '#888';
     const isDone = t.status === 'done';
     const dueRel = t.followUpAt ? new Date(t.followUpAt).toLocaleString('en',{hour:'2-digit',minute:'2-digit'}) : '';
-    return `<div class="sheet-card ${isDone?'is-done':''}" onclick="closeMobileSheet();openStatusModal('${dk}','${t.id}',null)">
+    const isOver = (typeof isOverdue === 'function') && isOverdue(t);
+    const isCarried = !!t._sourceDk;
+    const sourceDk = t._sourceDk || dk;
+    let badgeHtml = '';
+    if(isOver) badgeHtml = '<span class="bc-badge bc-badge-over">Overdue</span>';
+    else if(isCarried) badgeHtml = `<span class="bc-badge bc-badge-carry">↩ ${t._carryReason==='followup'?'Scheduled':'Carried'}</span>`;
+    return `<div class="sheet-card ${isDone?'is-done':''} ${isOver?'is-overdue':''} ${isCarried?'is-carried':''}" onclick="closeMobileSheet();openStatusModal('${sourceDk}','${t.id}',null)">
       <div class="sc-row">
-        <div class="sc-check ${isDone?'checked':''}" onclick="event.stopPropagation();toggleTaskDone('${t.id}');renderMobileSheet();">${isDone?'✓':''}</div>
+        <div class="sc-check ${isDone?'checked':''}" onclick="event.stopPropagation();toggleTaskDoneFor('${sourceDk}','${t.id}');renderMobileSheet();">${isDone?'✓':''}</div>
         <div class="sc-title">${esc(t.text||t.title||'(untitled)')}</div>
       </div>
       <div class="sc-meta">
         <span class="sc-tag" style="background:${tagColor}1a;color:${tagColor}"><span class="sc-tag-dot" style="background:${tagColor}"></span>${tag.toUpperCase()}</span>
+        ${badgeHtml}
         ${dueRel?`<span class="sc-due">${dueRel}</span>`:''}
         <div class="sc-avatar">${initialsOf(t)}</div>
       </div>
