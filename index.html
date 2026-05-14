@@ -1708,7 +1708,15 @@ function skipAuth(){
 }
 
 function toggleUserDropdown(){
-  document.getElementById('user-dropdown').classList.toggle('show');
+  console.log('[toggleUserDropdown] CALLED');
+  const dd = document.getElementById('user-dropdown');
+  if(!dd){ console.warn('[toggleUserDropdown] no #user-dropdown found'); return; }
+  // Close other panels first
+  document.querySelectorAll('.qs-dropdown').forEach(el=>el.classList.remove('show'));
+  const notifP = document.getElementById('hdr-notif-panel');
+  if(notifP) notifP.style.display = 'none';
+  dd.classList.toggle('show');
+  console.log('[toggleUserDropdown] new class:', dd.className);
 }
 
 // ── HEADER NOTIFICATION PANEL ──
@@ -1849,21 +1857,24 @@ function refreshNotifDot(){
   dot.classList.toggle('hidden', !hasUnread);
 }
 
-// Unified outside-click handler — closes all header dropdowns when clicking outside
-document.addEventListener('click', e => {
-  // user-dropdown
-  const userDd = document.getElementById('user-dropdown');
-  const userArea = document.getElementById('user-area');
-  if(userDd && userArea && !userArea.contains(e.target)) userDd.classList.remove('show');
-  // qs-dropdown
-  const qsDd = document.getElementById('qs-dropdown');
-  const qsBtn = document.getElementById('quick-switch-btn');
-  if(qsDd && qsBtn && !qsBtn.contains(e.target) && !qsDd.contains(e.target)) qsDd.classList.remove('show');
-  // notif panel
-  const notifP = document.getElementById('hdr-notif-panel');
-  const notifBtn = document.getElementById('hdr-notif-btn');
-  if(notifP && notifBtn && !notifBtn.contains(e.target) && !notifP.contains(e.target)){
-    notifP.style.display = 'none';
+// Unified outside-click handler — uses mousedown to fire before button clicks,
+// and checks composedPath so it works even with shadow DOM / unusual event paths.
+document.addEventListener('mousedown', e => {
+  const path = e.composedPath ? e.composedPath() : [];
+  const inUserArea = path.some(el => el?.id === 'user-area');
+  const inQsBtn = path.some(el => el?.id === 'quick-switch-btn' || el?.id === 'qs-dropdown');
+  const inNotif = path.some(el => el?.id === 'hdr-notif-btn' || el?.id === 'hdr-notif-panel');
+  if(!inUserArea){
+    const userDd = document.getElementById('user-dropdown');
+    if(userDd) userDd.classList.remove('show');
+  }
+  if(!inQsBtn){
+    const qsDd = document.getElementById('qs-dropdown');
+    if(qsDd) qsDd.classList.remove('show');
+  }
+  if(!inNotif){
+    const notifP = document.getElementById('hdr-notif-panel');
+    if(notifP) notifP.style.display = 'none';
   }
 });
 
