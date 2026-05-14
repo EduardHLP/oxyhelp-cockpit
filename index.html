@@ -3709,18 +3709,30 @@ function importJSON(event){
 //  AI DETECTION
 // ═══════════════════════════════════════════════════════
 async function detectAI(){
+  // Step 1: try the no-key probe (works inside Anthropic Artifacts where a proxy auto-injects credentials)
   try{
     const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:5,messages:[{role:'user',content:'hi'}]})});
-    if(r.status!==401&&r.status!==403){aiMode='artifact';updateAIBadge();return;}
-  }catch{}
+    if(r.ok){aiMode='artifact';updateAIBadge();console.log('[detectAI] mode=artifact (proxy detected)');return;}
+  }catch(e){
+    // Expected on Netlify/external hosts: CORS blocks the no-key probe.
+    console.log('[detectAI] no-key probe blocked (expected outside Artifact):', e?.message||e);
+  }
+  // Step 2: try with user's API key from localStorage
   const k=getKey();
+  console.log('[detectAI] checking key, present:', !!k, 'len:', k?.length||0);
   if(k){
     try{
       const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:5,messages:[{role:'user',content:'hi'}]})});
-      if(r.status!==401&&r.status!==403){aiMode='key';updateAIBadge();return;}
-    }catch{}
+      console.log('[detectAI] key probe status:', r.status);
+      if(r.ok){aiMode='key';updateAIBadge();console.log('[detectAI] mode=key');return;}
+      // Non-OK response — log for debugging
+      try{ const errBody = await r.text(); console.warn('[detectAI] key probe error body:', errBody.slice(0,200)); }catch{}
+    }catch(e){
+      console.warn('[detectAI] key probe threw:', e?.message||e);
+    }
   }
   aiMode='offline';updateAIBadge();
+  console.log('[detectAI] mode=offline');
 }
 
 function updateAIBadge(){
