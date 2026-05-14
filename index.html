@@ -3725,13 +3725,14 @@ async function detectAI(){
 
 function updateAIBadge(){
   const badge=document.getElementById('ai-badge'),btnKey=document.getElementById('btn-key'),chipAI=document.getElementById('chip-ai');
+  if(!badge) return;
   if(aiMode==='artifact'||aiMode==='key'){
     badge.textContent='✦ AI Active';badge.className='ai-badge on';
-    btnKey.textContent='AI';btnKey.classList.add('ai-on');
+    if(btnKey){ btnKey.textContent='AI'; btnKey.classList.add('ai-on'); }
     if(chipAI)chipAI.style.display='none';
   } else {
     badge.textContent='AI Offline';badge.className='ai-badge off';
-    btnKey.textContent='AI';btnKey.classList.remove('ai-on');
+    if(btnKey){ btnKey.textContent='AI'; btnKey.classList.remove('ai-on'); }
     if(chipAI&&window.innerWidth<=768)chipAI.style.display='inline-flex';
   }
 }
