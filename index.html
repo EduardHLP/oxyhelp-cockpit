@@ -126,13 +126,35 @@ header{display:flex;align-items:center;padding:0 24px;height:56px;background:var
 .header-sep{width:1px;height:20px;background:var(--border);}
 #dt{font-family:var(--mono);font-size:11.5px;color:var(--text-mid);font-weight:500;}
 .hdr-right{margin-left:auto;display:flex;gap:8px;align-items:center;}
-.ai-badge{font-family:var(--mono);font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;}
+/* ─── UNIFIED HEADER BUTTONS ─── all 34px height, consistent rounding ─── */
+.ai-badge{font-family:var(--mono);font-size:10px;font-weight:600;padding:0 11px;border-radius:8px;height:34px;display:inline-flex;align-items:center;gap:5px;letter-spacing:.3px;box-sizing:border-box;}
 .ai-badge.on{background:var(--green-light);color:var(--green);border:1px solid rgba(0,200,117,.25);}
 .ai-badge.off{background:var(--amber-light);color:var(--amber);border:1px solid rgba(245,158,11,.25);}
-.btn-hdr{background:var(--brand);border:none;color:#1C1816;font-family:var(--font);font-size:12px;font-weight:600;padding:7px 16px;cursor:pointer;border-radius:20px;transition:all .2s;box-shadow:0 2px 8px rgba(239,156,127,.3);}
+.btn-hdr{background:var(--brand);border:1px solid transparent;color:#1C1816;font-family:var(--font);font-size:12.5px;font-weight:600;padding:0 14px;cursor:pointer;border-radius:8px;transition:all .15s;box-shadow:0 1px 3px rgba(239,156,127,.25);height:34px;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;line-height:1;white-space:nowrap;}
 .btn-hdr:hover{background:var(--brand-dark);color:#fff;transform:translateY(-1px);}
-.btn-hdr.ghost{background:none;border:1.5px solid var(--border);color:var(--text-mid);box-shadow:none;}
+.btn-hdr.ghost{background:var(--bg);border:1px solid var(--border);color:var(--text-mid);box-shadow:none;font-weight:500;}
 .btn-hdr.ghost:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-light);transform:none;}
+.btn-hdr.icon-only{padding:0;width:34px;justify-content:center;font-size:14px;}
+
+/* Notification badge dot on bell */
+.notif-badge-dot{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid var(--bg2);box-sizing:content-box;}
+.notif-badge-dot.hidden{display:none;}
+
+/* Header dropdown panels (notifs, etc.) */
+.hdr-dropdown-panel{position:absolute;top:48px;right:24px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);z-index:60;min-width:320px;max-width:380px;max-height:480px;overflow-y:auto;padding:8px;}
+.hdr-dropdown-panel.show{display:block!important;}
+.hdr-notif-empty{padding:24px 12px;text-align:center;color:var(--text-faint);font-size:12px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;}
+.hdr-notif-item{padding:10px 12px;border-radius:8px;cursor:pointer;display:flex;gap:10px;align-items:flex-start;transition:background .15s;border:1px solid transparent;}
+.hdr-notif-item:hover{background:var(--bg);border-color:var(--border);}
+.hdr-notif-item.unread{background:var(--brand-light);border-color:var(--brand-mid);}
+.hdr-notif-icon{width:32px;height:32px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+.hdr-notif-body{flex:1;min-width:0;}
+.hdr-notif-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;}
+.hdr-notif-time{font-family:var(--mono);font-size:10px;color:var(--text-faint);letter-spacing:.5px;margin-top:3px;}
+.hdr-notif-head{display:flex;align-items:center;padding:8px 10px 10px;border-bottom:1px solid var(--border);margin-bottom:6px;}
+.hdr-notif-head-title{font-size:13px;font-weight:600;color:var(--text);flex:1;}
+.hdr-notif-head-clear{background:none;border:none;color:var(--text-faint);font-size:11px;cursor:pointer;padding:4px 8px;border-radius:6px;font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase;}
+.hdr-notif-head-clear:hover{color:var(--text);background:var(--bg);}
 
 /* ── SPOTIFY WIDGET ── */
 #spotify-widget{display:none;align-items:center;gap:8px;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:4px 12px 4px 4px;cursor:pointer;transition:all .2s;max-width:220px;}
@@ -143,8 +165,8 @@ header{display:flex;align-items:center;padding:0 24px;height:56px;background:var
 .sp-info{min-width:0;flex:1;}
 .sp-track{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;}
 .sp-artist{font-size:10px;color:var(--text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;}
-.sp-connect{background:none;border:1.5px solid #1DB954;color:#1DB954;font-size:10px;font-weight:600;padding:3px 8px;border-radius:12px;cursor:pointer;font-family:var(--font);flex-shrink:0;}
-.sp-connect:hover{background:#1DB954;color:#fff;}
+.sp-connect{background:var(--bg);border:1px solid rgba(29,185,84,.4);color:#1DB954;font-size:11.5px;font-weight:600;padding:0 11px;border-radius:8px;cursor:pointer;font-family:var(--font);height:34px;display:inline-flex;align-items:center;gap:5px;box-sizing:border-box;line-height:1;white-space:nowrap;transition:all .15s;}
+.sp-connect:hover{background:#1DB954;color:#fff;border-color:#1DB954;}
 
 /* ── LAYOUT ── */
 main{display:flex;flex:1;overflow:hidden;min-height:0;}
@@ -654,9 +676,9 @@ main{display:flex;flex:1;overflow:hidden;min-height:0;}
 .auth-skip:hover{color:rgba(255,255,255,0.7);}
 
 /* ── USER AVATAR / SYNC ── */
-.user-btn{display:flex;align-items:center;gap:7px;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:4px 12px 4px 4px;cursor:pointer;transition:all .15s;font-family:var(--font);}
+.user-btn{display:inline-flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0 12px 0 4px;cursor:pointer;transition:all .15s;font-family:var(--font);height:34px;box-sizing:border-box;line-height:1;}
 .user-btn:hover{border-color:var(--brand);background:var(--brand-light);}
-.user-avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--brand);overflow:hidden;}
+.user-avatar{width:26px;height:26px;border-radius:6px;object-fit:cover;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--brand);overflow:hidden;flex-shrink:0;}
 .user-avatar img{width:100%;height:100%;}
 .user-name{font-size:11px;font-weight:600;color:var(--text-mid);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .sync-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
@@ -682,10 +704,10 @@ main{display:flex;flex:1;overflow:hidden;min-height:0;}
 .notif-item-new{border-left:3px solid var(--green);}
 
 /* ── QUICK SWITCH ── */
-#quick-switch-btn{display:none;align-items:center;gap:6px;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:4px 10px 4px 8px;cursor:pointer;font-family:var(--font);font-size:11px;font-weight:600;color:var(--text-mid);transition:all .15s;}
+#quick-switch-btn{display:none;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0 12px 0 4px;cursor:pointer;font-family:var(--font);font-size:12.5px;font-weight:500;color:var(--text-mid);transition:all .15s;height:34px;box-sizing:border-box;line-height:1;}
 #quick-switch-btn:hover{border-color:var(--purple);color:var(--purple);background:var(--purple-light);}
-#quick-switch-btn.visible{display:flex;}
-.qs-avatar{width:20px;height:20px;border-radius:50%;background:var(--purple-light);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--purple);flex-shrink:0;}
+#quick-switch-btn.visible{display:inline-flex;}
+.qs-avatar{width:26px;height:26px;border-radius:6px;background:var(--purple-light);color:var(--purple);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;}
 .qs-dropdown{position:absolute;top:52px;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);z-index:50;min-width:200px;padding:6px;display:none;}
 .qs-dropdown.show{display:block;}
 .qs-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:all .12s;}
@@ -976,6 +998,14 @@ header,main{position:relative;z-index:1;}
   <div class="header-sep"></div>
   <div id="dt">—</div>
   <div class="hdr-right">
+    <!-- Persistent notification bell with badge -->
+    <button class="btn-hdr ghost icon-only" id="hdr-notif-btn" onclick="toggleNotifPanel()" title="Notificări" style="position:relative;">
+      <span style="font-size:15px;">🔔</span>
+      <span class="notif-badge-dot hidden" id="hdr-notif-dot"></span>
+    </button>
+    <!-- Notification panel dropdown -->
+    <div id="hdr-notif-panel" class="hdr-dropdown-panel" style="display:none;"></div>
+
     <span class="ai-badge off" id="ai-badge">AI OFF</span>
     <!-- Spotify Widget — moved to right rail -->
     <div id="spotify-widget" onclick="handleSpotifyClick()" style="display:none!important;">
@@ -999,7 +1029,6 @@ header,main{position:relative;z-index:1;}
         <div class="sync-dot offline" id="sync-dot" title="Sync status"></div>
         <div class="user-avatar" id="user-avatar">?</div>
         <span class="user-name" id="user-name">—</span>
-        <span class="notif-badge hidden" id="notif-badge">0</span>
       </button>
       <div class="user-dropdown" id="user-dropdown">
         <div class="dd-email" id="dd-email">—</div>
@@ -1010,7 +1039,6 @@ header,main{position:relative;z-index:1;}
         <button onclick="signOutUser()">Sign out</button>
       </div>
     </div>
-    <button class="btn-hdr ghost" onclick="openApiKey()" id="btn-key">⚙ AI</button>
     <button class="btn-hdr ghost" onclick="openEOD()">☀ Day End</button>
     <button class="btn-hdr ghost" id="team-brief-btn" onclick="openTeamBrief()" style="display:none;">📊 Team</button>
     <button class="btn-hdr" onclick="openReports()">↗ Reports</button>
@@ -1683,12 +1711,164 @@ function toggleUserDropdown(){
   document.getElementById('user-dropdown').classList.toggle('show');
 }
 
-// Close dropdown on outside click
+// ── HEADER NOTIFICATION PANEL ──
+function toggleNotifPanel(){
+  const p = document.getElementById('hdr-notif-panel');
+  if(!p) return;
+  const isOpen = p.style.display === 'block';
+  // close other dropdowns first
+  document.querySelectorAll('.qs-dropdown,.user-dropdown').forEach(el=>el.classList.remove('show'));
+  if(isOpen){
+    p.style.display = 'none';
+  } else {
+    renderNotifPanel();
+    p.style.display = 'block';
+    // mark all seen on open
+    setTimeout(() => {
+      try{ localStorage.setItem('cockpit:notif:lastSeen', String(Date.now())); }catch{}
+      const dot = document.getElementById('hdr-notif-dot');
+      if(dot) dot.classList.add('hidden');
+    }, 400);
+  }
+}
+
+function renderNotifPanel(){
+  const p = document.getElementById('hdr-notif-panel');
+  if(!p) return;
+  const notifs = collectNotifications();
+  let html = `<div class="hdr-notif-head">
+    <span class="hdr-notif-head-title">Notificări</span>
+    ${notifs.length ? '<button class="hdr-notif-head-clear" onclick="clearAllNotifs(event)">Marchează toate</button>' : ''}
+  </div>`;
+  // push permission status row
+  const pushOn = ('Notification' in window) && Notification.permission === 'granted';
+  if(!pushOn){
+    html += `<div class="hdr-notif-item" onclick="enablePushFromPanel()" style="cursor:pointer;background:var(--brand-light);border-color:var(--brand-mid);">
+      <div class="hdr-notif-icon" style="background:var(--brand);color:#1C1816;">🔔</div>
+      <div class="hdr-notif-body">
+        <div class="hdr-notif-title">Activează notificările push</div>
+        <div class="hdr-notif-time">Primești alerte chiar și când app-ul e închis</div>
+      </div>
+    </div>`;
+  }
+  if(!notifs.length){
+    html += `<div class="hdr-notif-empty">Nimic nou aici</div>`;
+  } else {
+    notifs.forEach(n => {
+      html += `<div class="hdr-notif-item ${n.unread?'unread':''}" onclick="${n.onclick||''}">
+        <div class="hdr-notif-icon">${n.icon||'•'}</div>
+        <div class="hdr-notif-body">
+          <div class="hdr-notif-title">${esc(n.title)}</div>
+          <div class="hdr-notif-time">${n.time||''}</div>
+        </div>
+      </div>`;
+    });
+  }
+  p.innerHTML = html;
+}
+
+function collectNotifications(){
+  // Build the notif list from current state: overdue + carried tasks + delegations
+  const out = [];
+  try{
+    const lastSeen = parseInt(localStorage.getItem('cockpit:notif:lastSeen') || '0', 10);
+    const dk = (typeof viewDate !== 'undefined') ? viewDate : (typeof todayDk === 'function' ? todayDk() : null);
+    // 1) Overdue tasks from carried set
+    if(typeof getDueOnDateFromOtherDays === 'function' && dk){
+      const carried = getDueOnDateFromOtherDays(dk);
+      carried.forEach(t => {
+        const isOver = (typeof isOverdue === 'function') && isOverdue(t);
+        const updatedTs = t.updatedAt ? new Date(t.updatedAt).getTime() : 0;
+        out.push({
+          icon: isOver ? '⚠' : '↩',
+          title: (isOver ? 'Overdue: ' : 'Carried: ') + (t.text || t.title || ''),
+          time: t._sourceDk || '',
+          unread: updatedTs > lastSeen,
+          onclick: `closeNotifPanel();openStatusModal('${t._sourceDk||dk}','${t.id}',null)`
+        });
+      });
+    }
+    // 2) Tasks assigned to me by others (delegated incoming)
+    if(typeof D !== 'undefined' && D.days){
+      const myEmail = (fbUser && fbUser.email) || '';
+      Object.entries(D.days).forEach(([odk, day]) => {
+        (day.tasks||[]).forEach(t => {
+          if(t.delegatedBy && t.assigneeEmail === myEmail && t.status !== 'done' && t.status !== 'dropped'){
+            const ts = t.createdAt ? new Date(t.createdAt).getTime() : 0;
+            out.push({
+              icon: '↗',
+              title: `${t.delegatedBy.split('@')[0]} ți-a dat: ${t.text||t.title||''}`,
+              time: odk,
+              unread: ts > lastSeen,
+              onclick: `closeNotifPanel();openStatusModal('${odk}','${t.id}',null)`
+            });
+          }
+        });
+      });
+    }
+  }catch(e){ console.warn('notif collect failed:', e); }
+  // Sort: unread first, newest first
+  return out.sort((a,b)=> (b.unread?1:0)-(a.unread?1:0)).slice(0, 30);
+}
+
+function closeNotifPanel(){
+  const p = document.getElementById('hdr-notif-panel');
+  if(p) p.style.display = 'none';
+}
+
+function clearAllNotifs(e){
+  if(e){ e.stopPropagation(); }
+  try{ localStorage.setItem('cockpit:notif:lastSeen', String(Date.now())); }catch{}
+  const dot = document.getElementById('hdr-notif-dot');
+  if(dot) dot.classList.add('hidden');
+  renderNotifPanel();
+}
+
+async function enablePushFromPanel(){
+  try{
+    closeNotifPanel();
+    if(!('Notification' in window)){
+      alert('Browser-ul nu suportă notificări.');
+      return;
+    }
+    const perm = await Notification.requestPermission();
+    if(perm === 'granted'){
+      if(typeof subscribeToPush === 'function') await subscribeToPush();
+    } else {
+      alert('Notificările au fost respinse. Schimbă din setările browserului dacă vrei să le activezi.');
+    }
+  }catch(e){ console.warn(e); }
+}
+
+// Update notif dot visibility based on whether there are unread items
+function refreshNotifDot(){
+  const dot = document.getElementById('hdr-notif-dot');
+  if(!dot) return;
+  const items = collectNotifications();
+  const hasUnread = items.some(i => i.unread);
+  dot.classList.toggle('hidden', !hasUnread);
+}
+
+// Unified outside-click handler — closes all header dropdowns when clicking outside
 document.addEventListener('click', e => {
-  const dd = document.getElementById('user-dropdown');
-  const ua = document.getElementById('user-area');
-  if(dd && ua && !ua.contains(e.target)) dd.classList.remove('show');
+  // user-dropdown
+  const userDd = document.getElementById('user-dropdown');
+  const userArea = document.getElementById('user-area');
+  if(userDd && userArea && !userArea.contains(e.target)) userDd.classList.remove('show');
+  // qs-dropdown
+  const qsDd = document.getElementById('qs-dropdown');
+  const qsBtn = document.getElementById('quick-switch-btn');
+  if(qsDd && qsBtn && !qsBtn.contains(e.target) && !qsDd.contains(e.target)) qsDd.classList.remove('show');
+  // notif panel
+  const notifP = document.getElementById('hdr-notif-panel');
+  const notifBtn = document.getElementById('hdr-notif-btn');
+  if(notifP && notifBtn && !notifBtn.contains(e.target) && !notifP.contains(e.target)){
+    notifP.style.display = 'none';
+  }
 });
+
+// Refresh notif dot periodically
+setInterval(() => { try{ refreshNotifDot(); }catch{} }, 15000);
 
 function updateUserUI(){
   const area = document.getElementById('user-area');
@@ -2164,6 +2344,9 @@ function renderTasks(){
   // Update weekly rail stats
   updateWeeklyRail();
 
+  // Refresh header notification dot
+  try{ refreshNotifDot(); }catch{}
+
   // Due on this date from other days — show for any viewed date
   const dueToday = getDueOnDateFromOtherDays(dk);
 
@@ -2586,11 +2769,18 @@ For everything else return ONLY this JSON schema — no other text:
       "followUpAt": null,
       "category": "quick|medium|long",
       "confidence": 0.0,
-      "taskId": "existing task ID if update_task or mark_done, else null"
+      "taskId": "existing task ID if update_task or mark_done, else null",
+      "newTitle": "ONLY for update_task when the user wants to rewrite/expand/replace the task title with new details. The new full title text. null if not editing the title."
     }
   ],
   "message": "brief 1-line summary of what was done, in user's language"
 }
+
+When the user says "update", "actualizeaza", "modifica taskul", "schimba taskul", "adauga detalii la taskul X" — emit an update_task operation with:
+- match_text: a phrase that identifies the existing task to update
+- newTitle: the FULL new title text (not just the addition). Combine existing context with new info to write a clear, complete title.
+- Keep status unchanged unless they explicitly change it
+- confidence ≥ 0.8 when the target task is unambiguous
 
 Few-shot examples:
 
@@ -2601,7 +2791,13 @@ Input: "am trimis ofertele lui leonidas si acum astept feedback de la el"
 Output: {"intent":"mixed","language":"ro","operations":[{"type":"mark_done","title":"Trimit ofertele lui Leonidas","match_text":"am trimis ofertele lui leonidas","status":"done","waitingOn":"","blockedReason":"","followUpAt":null,"category":"medium","confidence":0.97,"taskId":null},{"type":"create_task","title":"Astept feedback de la Leonidas","match_text":"acum astept feedback de la el","status":"waiting","waitingOn":"Leonidas","blockedReason":"","followUpAt":null,"category":"medium","confidence":0.92,"taskId":null}],"message":"1 task done, 1 task waiting"}
 
 Input: "azi 20 februarie am avut call cu mihaela, am tradus documentele din germania si i le am dat lui ovidiu"
-Output: {"intent":"mixed","language":"ro","operations":[{"type":"create_task","title":"Call cu Mihaela","match_text":"am avut call cu mihaela","status":"done","waitingOn":"","blockedReason":"","followUpAt":null,"category":"medium","confidence":0.96,"taskId":null},{"type":"create_task","title":"Tradus documentele din Germania","match_text":"am tradus documentele din germania","status":"done","waitingOn":"","blockedReason":"","followUpAt":null,"category":"medium","confidence":0.98,"taskId":null},{"type":"create_task","title":"Trimis lui Ovidiu documentele traduse","match_text":"i le am dat lui ovidiu","status":"done","waitingOn":"","blockedReason":"","followUpAt":null,"category":"quick","confidence":0.91,"taskId":null}],"message":"3 taskuri marcate done"}`;
+Output: {"intent":"mixed","language":"ro","operations":[{"type":"create_task","title":"Call cu Mihaela","match_text":"am avut call cu mihaela","status":"done","waitingOn":"","blockedReason":"","followUpAt":null,"category":"medium","confidence":0.96,"taskId":null},{"type":"create_task","title":"Tradus documentele din Germania","match_text":"am tradus documentele din germania","status":"done","waitingOn":"","blockedReason":"","followUpAt":null,"category":"medium","confidence":0.98,"taskId":null},{"type":"create_task","title":"Trimis lui Ovidiu documentele traduse","match_text":"i le am dat lui ovidiu","status":"done","waitingOn":"","blockedReason":"","followUpAt":null,"category":"quick","confidence":0.91,"taskId":null}],"message":"3 taskuri marcate done"}
+
+Input: "update: pentru minadi: sa mi faca un raspuns pentru barclays, un contract de reseller intre oxyhelp si ostracon, si o analiza a situatiei cu VDD din germania"
+Output: {"intent":"update_task","language":"ro","operations":[{"type":"update_task","title":"Minadi","match_text":"pentru minadi","status":"todo","waitingOn":"","blockedReason":"","followUpAt":null,"category":"medium","confidence":0.92,"taskId":null,"newTitle":"Minadi: raspuns pentru Barclays, contract reseller Oxyhelp-Ostracon, analiza situatie VDD Germania"}],"message":"Task actualizat cu detaliile pentru Minadi"}
+
+Input: "schimba taskul cu Vadim sa fie: trimit oferta monoplace 1.5 ATA cu accesorii complete"
+Output: {"intent":"update_task","language":"ro","operations":[{"type":"update_task","title":"Vadim","match_text":"taskul cu Vadim","status":"todo","waitingOn":"","blockedReason":"","followUpAt":null,"category":"medium","confidence":0.95,"taskId":null,"newTitle":"Trimit oferta monoplace 1.5 ATA cu accesorii complete pentru Vadim"}],"message":"Task Vadim actualizat"}`;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -3056,10 +3252,24 @@ ${summary}`;
     else if(op.type==='mark_done'){
       const allTasks = day.tasks.filter(t=>t.status!=='done'&&t.status!=='dropped');
       let target = null;
+      let targetDk = dk;
       if(op.taskId) target = day.tasks.find(t=>t.id===op.taskId);
       if(!target) target = fuzzy(op.title||op.match_text||'', allTasks, true);
+      // If not found in current day, search across all days
+      if(!target){
+        for(const [otherDk, otherDay] of Object.entries(D.days||{})){
+          if(otherDk === dk) continue;
+          const openTasks = (otherDay.tasks||[]).filter(t=>t.status!=='done'&&t.status!=='dropped');
+          const found = fuzzy(op.title||op.match_text||'', openTasks, true);
+          if(found){
+            target = found;
+            targetDk = otherDk;
+            break;
+          }
+        }
+      }
       if(target){
-        updateTaskStatus(dk, target.id, 'done', {});
+        updateTaskStatus(targetDk, target.id, 'done', {});
         doneCount++;
         // Log match reason + show undo
         const reason = getMatchReason(op.title||op.match_text||'', target);
@@ -3077,10 +3287,29 @@ ${summary}`;
     }
     else if(op.type==='update_task'){
       let target = null;
+      let targetDk = dk;
       if(op.taskId) target = day.tasks.find(t=>t.id===op.taskId);
       if(!target) target = fuzzy(op.title||op.match_text||'', day.tasks);
+      // If not found in current day, search across all days (for carried-over tasks)
+      if(!target){
+        for(const [otherDk, otherDay] of Object.entries(D.days||{})){
+          if(otherDk === dk) continue;
+          const found = fuzzy(op.title||op.match_text||'', otherDay.tasks||[]);
+          if(found && found.status !== 'done' && found.status !== 'dropped'){
+            target = found;
+            targetDk = otherDk;
+            break;
+          }
+        }
+      }
       if(target){
-        updateTaskStatus(dk, target.id, op.status||target.status, {
+        // Apply title rewrite if AI provided newTitle
+        if(op.newTitle && typeof op.newTitle === 'string' && op.newTitle.trim()){
+          target.text = op.newTitle.trim();
+          target.updatedAt = nowISO();
+          target.lastMeaningfulActivityAt = nowISO();
+        }
+        updateTaskStatus(targetDk, target.id, op.status||target.status, {
           waitingOn: op.waitingOn||target.waitingOn||'',
           blockedReason: op.blockedReason||target.blockedReason||'',
           followUpAt: op.followUpAt ? op.followUpAt+'T09:00:00.000Z' : target.followUpAt,
@@ -4147,52 +4376,18 @@ async function initPushNotifications() {
 }
 
 function showPushStatus(active) {
-  const existing = document.getElementById('push-status-btn');
-  if (existing) existing.remove();
-  const btn = document.createElement('button');
-  btn.id = 'push-status-btn';
-  btn.className = 'btn-hdr ghost';
-  btn.style.cssText = 'font-size:14px;padding:5px 9px;opacity:0.7;cursor:default;';
-  btn.title = active ? 'Notificări active pe acest device' : 'Notificările sunt blocate';
-  btn.innerHTML = active ? '🔔' : '🔕';
-  btn.style.cursor = 'pointer';
-  if (active) {
-    btn.onclick = async () => {
-      // Re-subscribe to refresh subscription
-      await subscribeToPush();
-    };
-  } else {
-    btn.style.opacity = '0.4';
-    btn.onclick = () => {
-      alert('Notificările sunt blocate. Mergi la setările browserului și permite notificările pentru acest site.');
-    };
-  }
-  const hdrRight = document.querySelector('.hdr-right');
-  if (hdrRight) hdrRight.prepend(btn);
+  // OLD dynamic injection replaced by static #hdr-notif-btn in header.
+  // Just reflect push state on the persistent bell.
+  const dot = document.getElementById('hdr-notif-dot');
+  // Visual dot only shown for unread notifs, not push status.
+  // Push permission state is reflected inside the notif panel itself.
+  return;
 }
 
 function showPushBell() {
-  const existing = document.getElementById('push-bell-btn');
-  if (existing) return;
-  const bell = document.createElement('button');
-  bell.id = 'push-bell-btn';
-  bell.className = 'btn-hdr ghost';
-  bell.title = 'Activează notificările push';
-  bell.innerHTML = '🔔';
-  bell.style.cssText = 'font-size:14px;padding:6px 9px;animation:pulse 2s infinite;';
-  bell.onclick = async () => {
-    bell.remove();
-    await subscribeToPush();
-    showPushStatus(true);
-  };
-  if (!document.getElementById('bell-style')) {
-    const s = document.createElement('style');
-    s.id = 'bell-style';
-    s.textContent = '@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}';
-    document.head.appendChild(s);
-  }
-  const hdrRight = document.querySelector('.hdr-right');
-  if (hdrRight) hdrRight.prepend(bell);
+  // OLD dynamic injection replaced by static #hdr-notif-btn in header.
+  // The notif panel opens via toggleNotifPanel() — no separate bell needed.
+  return;
 }
 
 async function subscribeToPush() {
