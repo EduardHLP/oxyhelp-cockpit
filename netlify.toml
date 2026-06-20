@@ -1,6 +1,5 @@
 [build]
   publish = "."
-  command = "echo done"
 
 [build.environment]
   NODE_VERSION = "18"
@@ -8,6 +7,19 @@
 [functions]
   directory = "netlify/functions"
 
+# index.html must always be fresh — never cache it.
+# This is what stops the "old version after deploy" problem.
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Service worker must always be fresh too
 [[headers]]
   for = "/sw.js"
   [headers.values]
