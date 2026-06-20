@@ -1676,6 +1676,9 @@ try {
 // ═══════════════════════════════════════════════════════
 const STORE_KEY = 'daylog:v3';
 const AKEY = 'daylog:apikey';
+// In-memory copy of the API key, loaded from Firestore at login.
+// This survives localStorage clears because the source of truth is Firestore.
+let _apiKeyMem = null;
 const STATUSES = ['todo','in_progress','waiting','blocked','done','dropped'];
 const STATUS_LABELS = {todo:'To Do',in_progress:'In Progress',waiting:'Waiting',blocked:'Blocked',done:'Done',dropped:'Dropped'};
 const STATUS_ICONS  = {todo:'○',in_progress:'◎',waiting:'⏳',blocked:'⛔',done:'✓',dropped:'✗'};
@@ -2137,8 +2140,45 @@ async function uploadLocalIfNeeded(){
     }
   }catch(e){ console.warn('Upload local failed:', e); }
 }
-function getKey(){try{return localStorage.getItem(AKEY)||'';}catch{return '';}}
-function setKey(k){try{localStorage.setItem(AKEY,k);}catch{}}
+function getKey(){
+  // Priority: in-memory (from Firestore) > localStorage
+  if(_apiKeyMem) return _apiKeyMem;
+  try{ return localStorage.getItem(AKEY) || ''; }catch{ return ''; }
+}
+function setKey(k){
+  _apiKeyMem = k || null;
+  // Save locally for instant access
+  try{ localStorage.setItem(AKEY, k); }catch{}
+  // Save to Firestore so it survives cache clears and syncs across devices
+  saveKeyToFirestore(k);
+}
+
+async function saveKeyToFirestore(k){
+  if(!fbUser || !fbDb || !k) return;
+  try{
+    await fbDb.collection('users').doc(fbUser.uid).set({
+      apiKey: k,
+      apiKeyUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, {merge:true});
+    console.log('[apiKey] saved to Firestore');
+  }catch(e){ console.warn('[apiKey] Firestore save failed:', e); }
+}
+
+async function loadKeyFromFirestore(){
+  if(!fbUser || !fbDb) return null;
+  try{
+    const doc = await fbDb.collection('users').doc(fbUser.uid).get();
+    if(doc.exists && doc.data().apiKey){
+      const k = doc.data().apiKey;
+      _apiKeyMem = k;
+      // Mirror to localStorage for instant access next time
+      try{ localStorage.setItem(AKEY, k); }catch{}
+      console.log('[apiKey] loaded from Firestore, len:', k.length);
+      return k;
+    }
+  }catch(e){ console.warn('[apiKey] Firestore load failed:', e); }
+  return null;
+}
 
 // ═══════════════════════════════════════════════════════
 //  UTILS
@@ -5598,6 +5638,9 @@ async function initApp(){
       }
     }
   });
+
+  // Load API key from Firestore first (survives cache clears, syncs across devices)
+  await loadKeyFromFirestore();
 
   await detectAI();
 
