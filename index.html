@@ -214,7 +214,7 @@ main{display:flex;flex:1;overflow:hidden;min-height:0;}
 .ring-stats b{color:var(--text);font-weight:600;}
 
 /* chat messages */
-#chat-msgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 24px;display:flex;flex-direction:column;gap:10px;min-height:0;}
+#chat-msgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 24px;display:flex;flex-direction:column;gap:10px;min-height:160px;}
 
 /* task board bar */
 #task-board-bar{display:flex;align-items:center;gap:10px;padding:9px 24px 5px;border-top:1px solid var(--border);background:var(--bg);flex-shrink:0;}
@@ -791,10 +791,10 @@ main{display:flex;flex:1;overflow:hidden;min-height:0;}
 
 @media(max-width:900px){#left{width:0 !important;min-width:0 !important;border:none;}#right-rail{display:none;}}
 /* ── HERO BLOCK ── */
-#hero-block{padding:18px 24px 14px;text-align:center;flex-shrink:0;border-bottom:1px solid var(--border);}#hero-kicker{font-family:var(--mono);font-size:10.5px;letter-spacing:1.6px;color:var(--brand);font-weight:600;text-transform:uppercase;margin-bottom:10px;}
-#hero-headline{font-size:28px;font-weight:500;line-height:1.18;letter-spacing:-1px;margin-bottom:12px;color:var(--text);}
+#hero-block{padding:12px 24px 8px;text-align:center;flex-shrink:0;border-bottom:1px solid var(--border);}#hero-kicker{font-family:var(--mono);font-size:10.5px;letter-spacing:1.6px;color:var(--brand);font-weight:600;text-transform:uppercase;margin-bottom:6px;}
+#hero-headline{font-size:24px;font-weight:500;line-height:1.15;letter-spacing:-1px;margin-bottom:8px;color:var(--text);}
 #hero-subtitle{color:var(--text-mid);font-weight:400;}
-#hero-stats{display:flex;align-items:center;justify-content:center;gap:14px;font-family:var(--mono);font-size:11.5px;letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px;}
+#hero-stats{display:flex;align-items:center;justify-content:center;gap:14px;font-family:var(--mono);font-size:11.5px;letter-spacing:.6px;text-transform:uppercase;margin-bottom:6px;}
 .stat-pair{display:inline-flex;align-items:baseline;gap:6px;color:var(--text);}
 .stat-pair b{font-weight:700;font-size:13px;}
 .stat-pair.urgent b{color:var(--red);}
@@ -821,7 +821,7 @@ header,main{position:relative;z-index:1;}
 .tb-filter{font-family:var(--mono);font-size:10px;background:var(--bg);border:1px solid var(--border);color:var(--text-faint);padding:4px 10px;border-radius:6px;cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .15s;}
 .tb-filter:hover{border-color:var(--brand);color:var(--brand);}
 
-#status-board{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:8px 24px 0;flex-shrink:0;height:240px;min-height:140px;overflow:hidden;}
+#status-board{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:8px 24px 0;flex-shrink:0;height:180px;min-height:120px;overflow:hidden;}
 .board-col{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
 .board-col-active{border-color:var(--brand-mid);box-shadow:0 0 0 1px var(--brand-mid);}
 .board-col-head{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;color:var(--text);margin-bottom:10px;flex-shrink:0;}
@@ -2736,6 +2736,19 @@ Important behavior rules:
 7. If a user says they are waiting on someone, mark the task as waiting
 8. If a user says something cannot proceed because of an issue, mark it as blocked
 9. Preserve the user's language in extracted task titles
+
+TITLE QUALITY — reformulate intelligently (IMPORTANT):
+Your goal is a clean, clear task title that reads well in a task board. Judge the input:
+- If the user wrote something SHORT, hurried, or fragmented ("raspuns mail leonidas", "oferta vadim 1.5 ata", "suna hotel como"), REWRITE it into a clean, well-formed task title with proper capitalization and a clear action verb. Examples:
+  - "raspuns mail leonidas oferta" → "Răspund la mailul lui Leonidas cu oferta"
+  - "oferta vadim 1.5 ata" → "Trimit oferta pentru Vadim — monoplace 1.5 ATA"
+  - "suna hotel como" → "Sun la Hotel Como"
+  - "follow up barclays" → "Fac follow-up cu Barclays"
+- If the user already wrote a DETAILED, well-formed task (a full sentence with clear context, multiple clauses, or specific details), LEAVE IT ESSENTIALLY AS-IS. Only fix capitalization and obvious typos. Do NOT pad it, do NOT add invented detail, do NOT restructure it. Example:
+  - "Fac update in pricelist cu variantele de compresie enhanced, extended si performance pentru clientii din Germania" → keep as written (just clean caps/typos)
+- Reformulation means: clearer phrasing of what the USER said. NEVER invent facts, numbers, names, deadlines, or context that the user did not provide.
+- Keep titles concise — one line. If the user dumped a lot of context, put the action in the title and the rest can stay implied. Do not write paragraph-length titles.
+- Match the user's language (Romanian stays Romanian, English stays English).
 10. Return structured JSON only, no prose, no markdown, no code fences
 
 Input tolerance — CRITICAL:
@@ -2901,7 +2914,7 @@ async function callAI(userMessage, image=null){
   });
 
   const body = {
-    model:'claude-sonnet-4-20250514',
+    model:'claude-sonnet-4-5',
     max_tokens:2000,
     system:buildSystem(),
     messages:safeMessages
@@ -3166,7 +3179,7 @@ TASKS:
 ${taskSummary}`;
           const headers={'Content-Type':'application/json'};
           if(aiMode==='key'){headers['x-api-key']=getKey();headers['anthropic-version']='2023-06-01';headers['anthropic-dangerous-direct-browser-access']='true';}
-          const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+          const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
           const data=await r.json();
           const text=data.content.map(b=>b.text||'').join('');
           hideTyping();
@@ -3197,7 +3210,7 @@ Use bullet points starting with "•". Concise, natural, outcome-based.
 ${summary}`;
           const headers={'Content-Type':'application/json'};
           if(aiMode==='key'){headers['x-api-key']=getKey();headers['anthropic-version']='2023-06-01';headers['anthropic-dangerous-direct-browser-access']='true';}
-          const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
+          const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
           const data=await r.json();
           const text=data.content.map(b=>b.text||'').join('');
           hideTyping();
@@ -3553,7 +3566,7 @@ Include timestamps where relevant. Include waiting reasons and blocked reasons.`
         const prompt=`${modeInstruction}\n\nDate: ${fd(dk)}\n\nTASKS:\n${taskSummary}\n\nACTIVITY LOG:\n${notesSummary}`;
         const headers={'Content-Type':'application/json'};
         if(aiMode==='key'){headers['x-api-key']=getKey();headers['anthropic-version']='2023-06-01';headers['anthropic-dangerous-direct-browser-access']='true';}
-        const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
+        const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1200,messages:[{role:'user',content:prompt}]})});
         const data=await r.json();
         const text=data.content.map(b=>b.text||'').join('');
         out.className='';
@@ -3593,7 +3606,7 @@ Use bullet points starting with "•". Include waiting/blocked reasons.`;
         const prompt=`${modeInstruction}\n\nPeriod: ${fdShort(ws)} → ${fdShort(we)}\n\n${summary}`;
         const headers={'Content-Type':'application/json'};
         if(aiMode==='key'){headers['x-api-key']=getKey();headers['anthropic-version']='2023-06-01';headers['anthropic-dangerous-direct-browser-access']='true';}
-        const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
+        const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
         const data=await r.json();
         const text=data.content.map(b=>b.text||'').join('');
         out.className='';
@@ -3722,7 +3735,7 @@ function importJSON(event){
 async function detectAI(){
   // Step 1: try the no-key probe (works inside Anthropic Artifacts where a proxy auto-injects credentials)
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:5,messages:[{role:'user',content:'hi'}]})});
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:5,messages:[{role:'user',content:'hi'}]})});
     if(r.ok){aiMode='artifact';updateAIBadge();console.log('[detectAI] mode=artifact (proxy detected)');return;}
   }catch(e){
     // Expected on Netlify/external hosts: CORS blocks the no-key probe.
@@ -3733,17 +3746,23 @@ async function detectAI(){
   console.log('[detectAI] checking key, present:', !!k, 'len:', k?.length||0);
   if(k){
     try{
-      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:5,messages:[{role:'user',content:'hi'}]})});
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:5,messages:[{role:'user',content:'hi'}]})});
       console.log('[detectAI] key probe status:', r.status);
       if(r.ok){aiMode='key';updateAIBadge();console.log('[detectAI] mode=key');return;}
-      // Non-OK response — log for debugging
-      try{ const errBody = await r.text(); console.warn('[detectAI] key probe error body:', errBody.slice(0,200)); }catch{}
+      // 401/403 = bad key. Anything else (network/transient) — still trust the key.
+      if(r.status===401||r.status===403){
+        try{ const errBody = await r.text(); console.warn('[detectAI] key rejected:', errBody.slice(0,200)); }catch{}
+        aiMode='offline';updateAIBadge();console.log('[detectAI] mode=offline (key rejected)');return;
+      }
+      console.warn('[detectAI] non-auth error', r.status, '— trusting key anyway');
+      aiMode='key';updateAIBadge();return;
     }catch(e){
-      console.warn('[detectAI] key probe threw:', e?.message||e);
+      console.warn('[detectAI] key probe threw but key exists — trusting key:', e?.message||e);
+      aiMode='key';updateAIBadge();return;
     }
   }
   aiMode='offline';updateAIBadge();
-  console.log('[detectAI] mode=offline');
+  console.log('[detectAI] mode=offline (no key)');
 }
 
 function updateAIBadge(){
@@ -3769,7 +3788,7 @@ async function saveApiKey(){
   const k=document.getElementById('apikey-in').value.trim();if(!k)return;
   const btn=document.querySelector('#apikey-modal .btn-gen');btn.textContent='Testing…';btn.disabled=true;
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:5,messages:[{role:'user',content:'hi'}]})});
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:5,messages:[{role:'user',content:'hi'}]})});
     if(r.status!==401&&r.status!==403){setKey(k);aiMode='key';updateAIBadge();closeModal('apikey-modal');botMsg('✓ AI is now active. Dump your tasks, tell me what you finished, ask for a report.');}
     else{btn.textContent='Invalid key';btn.disabled=false;}
   }catch{btn.textContent='Error — retry';btn.disabled=false;}
@@ -4695,7 +4714,7 @@ ${memberSummaries}`;
       }
       const r = await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST', headers,
-        body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:2000,
+        body: JSON.stringify({model:'claude-sonnet-4-5', max_tokens:2000,
           messages:[{role:'user', content:prompt}]})
       });
       const data = await r.json();
@@ -5693,12 +5712,14 @@ function initBoardResize(){
   const board = document.getElementById('status-board');
   if(!handle || !board) return;
 
-  // Restore saved height
+  // Restore saved height (clamped so it never crushes the chat area)
   try{
     const saved = localStorage.getItem('daylog:boardHeight');
     if(saved){
       const h = parseInt(saved, 10);
-      if(h >= 140 && h <= window.innerHeight * 0.8) board.style.height = h + 'px';
+      const maxAllowed = Math.floor(window.innerHeight * 0.4); // board never more than 40% of screen
+      if(h >= 120 && h <= maxAllowed) board.style.height = h + 'px';
+      else if(h > maxAllowed) board.style.height = maxAllowed + 'px';
     }
   }catch{}
 
@@ -5719,8 +5740,8 @@ function initBoardResize(){
     const dy = y - startY;
     // Drag UP = bigger board (handle above board, moving up gives board more space)
     let newH = startH - dy;
-    const maxH = Math.floor(window.innerHeight * 0.75);
-    if(newH < 140) newH = 140;
+    const maxH = Math.floor(window.innerHeight * 0.5);
+    if(newH < 120) newH = 120;
     if(newH > maxH) newH = maxH;
     board.style.height = newH + 'px';
   };
