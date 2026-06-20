@@ -1765,7 +1765,7 @@ function renderNotifPanel(){
   const pushOn = ('Notification' in window) && Notification.permission === 'granted';
   if(!pushOn){
     html += `<div class="hdr-notif-item" onclick="enablePushFromPanel()" style="cursor:pointer;background:var(--brand-light);border-color:var(--brand-mid);">
-      <div class="hdr-notif-icon" style="background:var(--brand);color:#1C1816;">🔔</div>
+      <div class="hdr-notif-icon" style="background:var(--brand);color:#1C1816;"><svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
       <div class="hdr-notif-body">
         <div class="hdr-notif-title">Activează notificările push</div>
         <div class="hdr-notif-time">Primești alerte chiar și când app-ul e închis</div>
@@ -1855,6 +1855,9 @@ async function enablePushFromPanel(){
     const perm = await Notification.requestPermission();
     if(perm === 'granted'){
       if(typeof subscribeToPush === 'function') await subscribeToPush();
+      try{ refreshNotifDot(); }catch{}
+      // Quick confirmation notification
+      try{ new Notification('Oxyhelp Cockpit', { body: 'Notificările sunt acum active.' }); }catch{}
     } else {
       alert('Notificările au fost respinse. Schimbă din setările browserului dacă vrei să le activezi.');
     }
@@ -1867,7 +1870,9 @@ function refreshNotifDot(){
   if(!dot) return;
   const items = collectNotifications();
   const hasUnread = items.some(i => i.unread);
-  dot.classList.toggle('hidden', !hasUnread);
+  // Also show dot if push notifications aren't enabled yet (nudge to enable)
+  const pushOff = !(('Notification' in window) && Notification.permission === 'granted');
+  dot.classList.toggle('hidden', !(hasUnread || pushOff));
 }
 
 // Unified outside-click handler — uses mousedown to fire before button clicks,
@@ -2810,6 +2815,14 @@ The user often types fast on mobile, dictates via voice (Whisper), or thinks in 
 - Fragments and incomplete sentences ("trebuie raspuns vadim", "ofertele leonidas urgent") are valid task captures — extract the obvious intent
 - Numbers in middle of words ("pro4s5t") are likely typos — read past them
 - If the message is genuinely too vague to act on (e.g. just "ok", "merci", "da"), return general_note with empty operations — don't invent tasks
+
+TEST & FILLER MESSAGES — CRITICAL (do NOT create tasks from these):
+Some messages are NOT real tasks even if they contain verbs. Return intent "general_note" with EMPTY operations for:
+- Test messages: anything containing "test", "testing", "test 123", "merge?", "verific daca merge", "proba", "incerc app" — these are the user checking if the app works, NOT real tasks. "test 123 v6, sa vad cum e nou design" is a TEST, create ZERO tasks.
+- Meta-remarks about the app itself: "sa vad cum e", "sa vad cum arata", "let me see", "cum merge", "looks good", "nice" — observations, not actions.
+- A "verb" like "vad/see/check" pointed at the app or at testing is NOT an actionable task. Only create a task when there is a REAL work item with a clear subject (a client, a document, a deliverable, a concrete action in the user's actual job).
+- When in doubt whether something is a real task or just the user typing to test/observe: do NOT create a task. A false task is worse than a missed one — the user can always re-type a real task, but fake tasks clutter the board and erode trust.
+- Ask yourself: "Would this make sense as a line item on a busy professional's to-do list?" If it's "Test 123" or "Vad cum e" — obviously not. Skip it.
 - NEVER return empty title strings. If you create a task, the title MUST be non-empty. If you cannot extract a meaningful title, do not create that operation.
 - When a person's name appears with "lui/pentru/catre/to/for X", X is usually the SUBJECT of the task (a client/external contact), NOT the assignee. Only treat as assignee if the user explicitly says "assign to X", "give X this", "X to handle", "ii dau lui X sa faca". Otherwise the task stays with the speaker.
 
