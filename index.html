@@ -83,37 +83,48 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{height:100%;height:100dvh;}
 :root{
-  --bg:#F5F1F0;--bg2:#ffffff;--surface2:#F9F6F4;
+  /* Oxyhelp × Linear — LIGHT */
+  --bg:#FDFCFB;--bg2:#FFFFFF;--surface2:#F5F1F0;
   --border:#EBE5E3;--border2:#DDD5D3;
-  --brand:#EF9C7F;--brand-light:#FDFCFB;--brand-mid:rgba(239,156,127,.12);--brand-dark:#CE95A1;
-  --green:#00c875;--green-light:#e3faf0;
+  --brand:#EF9C7F;--brand-deep:#E67F71;--brand-light:#FDF0EA;--brand-mid:rgba(239,156,127,.12);--brand-dark:#CE95A1;
+  --green:#5BBF8A;--green-light:#e8f6ef;
   --amber:#f59e0b;--amber-light:#fffbeb;
   --red:#FE3B2B;--red-light:#fff0ee;
   --blue:#3b82f6;--blue-light:#eff6ff;
-  --purple:#A86E82;--purple-light:#f9f0f4;
-  --text:#1C1816;--text-mid:#6F6562;--text-faint:#B3A9A7;
-  --shadow-sm:0 2px 8px rgba(28,24,22,.06);--shadow-md:0 4px 20px rgba(28,24,22,.09);--shadow-lg:0 8px 40px rgba(28,24,22,.13);
+  --purple:#A86E82;--purple-light:#f9f0f4;--mauve:#CE95A1;--mauve-deep:#A86E82;
+  --text:#1C1816;--text-mid:#574E4B;--text-soft:#8D8380;--text-faint:#B3A9A7;
+  --shadow-sm:0 1px 2px rgba(22,17,31,.05);--shadow-md:0 4px 14px rgba(22,17,31,.07);--shadow-lg:0 12px 32px rgba(22,17,31,.10);
   --radius:14px;--radius-sm:8px;
-  --font:'Geist',sans-serif;--mono:'Geist Mono',monospace;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;--mono:'JetBrains Mono','SF Mono',monospace;
+  --dur:.18s;--ease:cubic-bezier(.4,0,.2,1);
 }
 
 [data-theme="dark"]{
-  --bg:#16111F;--bg2:#1e1829;--surface2:#251e30;
-  --border:#2e2640;--border2:#3a3250;
-  --brand:#EF9C7F;--brand-light:#2a1f1a;--brand-mid:rgba(239,156,127,.15);--brand-dark:#CE95A1;
-  --green:#00c875;--green-light:#0d2e1f;
+  /* Oxyhelp × Linear — DARK (deep ink #16111F, lifted surfaces) */
+  --bg:#16111F;--bg2:#1E1825;--surface2:#120D1A;
+  --border:#2A2433;--border2:#362F40;
+  --brand:#EF9C7F;--brand-deep:#E67F71;--brand-light:#241a22;--brand-mid:rgba(239,156,127,.15);--brand-dark:#CE95A1;
+  --green:#5BBF8A;--green-light:#13251c;
   --amber:#f59e0b;--amber-light:#2a1f0a;
-  --red:#ff5a4a;--red-light:#2e1412;
+  --red:#FE3B2B;--red-light:#2a1215;
   --blue:#5b9cf6;--blue-light:#111e35;
-  --purple:#C49AAF;--purple-light:#251820;
-  --text:#f0ece8;--text-mid:#9e9590;--text-faint:#5a5450;
-  --shadow-sm:0 2px 8px rgba(0,0,0,.25);--shadow-md:0 4px 20px rgba(0,0,0,.35);--shadow-lg:0 8px 40px rgba(0,0,0,.5);
+  --purple:#C49AAF;--purple-light:#251820;--mauve:#CE95A1;--mauve-deep:#C49AAF;
+  --text:#FDFCFB;--text-mid:#C9C0CC;--text-soft:#8D8380;--text-faint:#5a5450;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.25);--shadow-md:0 4px 20px rgba(0,0,0,.35);--shadow-lg:0 8px 40px rgba(0,0,0,.5);
 }
+
+/* ── Oxyhelp signature animations (from design system) ── */
+@keyframes oxyBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes oxyGlowPulse{0%,100%{opacity:.20;transform:scale(.82)}50%{opacity:.55;transform:scale(1.12)}}
+@keyframes oxyRipple{0%,45%{opacity:0;transform:scale(.62)}56%{opacity:.5;transform:scale(.78)}100%{opacity:0;transform:scale(1.25)}}
+@keyframes oxyMsgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes oxyDrop{0%{transform:scale(.95);box-shadow:0 0 0 2px var(--accent,var(--brand))}60%{box-shadow:0 0 0 2px var(--brand)}100%{transform:scale(1);box-shadow:none}}
+.oxy-no-transition,.oxy-no-transition *{transition:none!important;}
 
 body{background:var(--bg);color:var(--text);font-family:var(--font);height:100vh;height:100dvh;height:-webkit-fill-available;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;overflow:hidden;font-size:14px;}
 
@@ -130,7 +141,7 @@ header{display:flex;align-items:center;padding:0 24px;height:56px;background:var
 .ai-badge{font-family:var(--mono);font-size:10px;font-weight:600;padding:0 11px;border-radius:8px;height:34px;display:inline-flex;align-items:center;gap:5px;letter-spacing:.3px;box-sizing:border-box;}
 .ai-badge.on{background:var(--green-light);color:var(--green);border:1px solid rgba(0,200,117,.25);}
 .ai-badge.off{background:var(--amber-light);color:var(--amber);border:1px solid rgba(245,158,11,.25);}
-.btn-hdr{background:var(--brand);border:1px solid transparent;color:#1C1816;font-family:var(--font);font-size:12.5px;font-weight:600;padding:0 14px;cursor:pointer;border-radius:8px;transition:all .15s;box-shadow:0 1px 3px rgba(239,156,127,.25);height:34px;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;line-height:1;white-space:nowrap;}
+.btn-hdr{background:var(--brand);border:1px solid transparent;color:#1C1816;font-family:var(--font);font-size:12.5px;font-weight:600;padding:0 14px;cursor:pointer;border-radius:6px;transition:all var(--dur) var(--ease);box-shadow:0 2px 8px rgba(239,156,127,.3);height:34px;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;line-height:1;white-space:nowrap;}
 .btn-hdr:hover{background:var(--brand-dark);color:#fff;transform:translateY(-1px);}
 .btn-hdr.ghost{background:var(--bg);border:1px solid var(--border);color:var(--text-mid);box-shadow:none;font-weight:500;}
 .btn-hdr.ghost:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-light);transform:none;}
@@ -646,43 +657,72 @@ main{display:flex;flex:1;overflow:hidden;min-height:0;}
 /* ── AUTH OVERLAY ── */
 .auth-overlay{
   position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
-  background:#16111F;
+  background:var(--bg);
   overflow:hidden;
 }
 .auth-overlay::before{
   content:'';position:absolute;inset:0;
   background:
-    radial-gradient(ellipse 80% 60% at 20% 20%, rgba(239,156,127,0.45) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 70% at 80% 80%, rgba(168,110,130,0.4) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(206,149,161,0.25) 0%, transparent 70%);
+    radial-gradient(ellipse 70% 50% at 50% 35%, rgba(239,156,127,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 50% 70%, rgba(206,149,161,0.06) 0%, transparent 60%);
   pointer-events:none;
-}
-.auth-overlay::after{
-  content:'';position:absolute;inset:0;
-  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity:0.4;pointer-events:none;
 }
 .auth-overlay.hidden{display:none;}
 .auth-card{
   position:relative;z-index:1;
-  background:rgba(255,255,255,0.07);
-  border:1px solid rgba(255,255,255,0.12);
-  border-radius:24px;
+  background:transparent;
+  border:none;
   padding:44px 40px;
   text-align:center;
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
-  max-width:400px;width:90%;
-  box-shadow:0 24px 64px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.15);
+  max-width:420px;width:90%;
+  display:flex;flex-direction:column;align-items:center;
 }
-.auth-card .logo-auth{margin-bottom:8px;opacity:1;}
-.auth-card h2{font-size:22px;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-.4px;font-family:'Geist',sans-serif;}
-.auth-card p{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:28px;}
-.btn-google{display:inline-flex;align-items:center;gap:10px;background:#fff;border:none;color:#1C1816;font-family:'Geist',sans-serif;font-size:14px;font-weight:600;padding:13px 32px;border-radius:40px;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(0,0,0,0.25);width:100%;justify-content:center;}
-.btn-google:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.35);}
+/* Breathing O₂ — ripples radiate from the BIG O's center */
+.oxy-breath-wrap{
+  position:relative;width:160px;height:160px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:28px;
+}
+/* ripple origin anchored to the big O center (left-of-center, since the mark is left-weighted) */
+.oxy-ripple{
+  position:absolute;
+  /* big O center in the 120x100 viewBox is at x=46,y=46 → ~38%,46% of the wrap */
+  left:38%;top:46%;
+  width:88px;height:88px;margin-left:-44px;margin-top:-44px;
+  border-radius:50%;
+  border:1.5px solid var(--brand);
+  opacity:0;
+  animation:oxyRipple 4s cubic-bezier(.33,0,.67,1) infinite;
+  pointer-events:none;
+}
+.oxy-ripple-2{animation-delay:.5s;}
+.oxy-ripple-3{animation-delay:1s;}
+.oxy-glow{
+  position:absolute;left:38%;top:46%;
+  width:120px;height:120px;margin-left:-60px;margin-top:-60px;
+  border-radius:50%;
+  background:radial-gradient(circle, var(--brand) 0%, transparent 70%);
+  opacity:.2;
+  animation:oxyGlowPulse 4s cubic-bezier(.37,0,.63,1) infinite;
+  pointer-events:none;
+}
+.oxy-breath-mark{
+  position:relative;z-index:2;width:108px;height:90px;
+  transform-origin:38% 46%;
+  animation:oxyBreathe 4s cubic-bezier(.37,0,.63,1) infinite;
+}
+.auth-kicker{
+  font-family:var(--mono);font-size:11px;letter-spacing:2px;
+  color:var(--brand-deep);text-transform:uppercase;margin-bottom:18px;font-weight:500;
+}
+.auth-card h2{font-size:28px;font-weight:600;color:var(--text);margin-bottom:8px;letter-spacing:-.6px;font-family:var(--font);}
+.auth-card p{font-size:14px;color:var(--text-mid);line-height:1.6;margin-bottom:28px;max-width:300px;}
+.btn-google{display:inline-flex;align-items:center;gap:10px;background:var(--brand);border:none;color:#1C1816;font-family:var(--font);font-size:14px;font-weight:600;padding:14px 32px;border-radius:8px;cursor:pointer;transition:all var(--dur) var(--ease);box-shadow:0 4px 16px rgba(239,156,127,.3);width:100%;justify-content:center;}
+.btn-google:hover{transform:translateY(-1px);background:var(--brand-deep);box-shadow:0 6px 22px rgba(239,156,127,.4);}
 .btn-google svg{width:20px;height:20px;flex-shrink:0;}
-.auth-skip{margin-top:14px;font-size:12px;color:rgba(255,255,255,0.4);background:none;border:none;cursor:pointer;font-family:'Geist',sans-serif;text-decoration:underline;}
-.auth-skip:hover{color:rgba(255,255,255,0.7);}
+.auth-skip{margin-top:14px;font-size:12px;color:var(--text-soft);background:none;border:none;cursor:pointer;font-family:var(--font);text-decoration:underline;}
+.auth-skip:hover{color:var(--text-mid);}
+.auth-footer{margin-top:32px;font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--text-faint);text-transform:uppercase;}
 
 /* ── USER AVATAR / SYNC ── */
 .user-btn{display:inline-flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0 12px 0 4px;cursor:pointer;transition:all .15s;font-family:var(--font);height:34px;box-sizing:border-box;line-height:1;}
@@ -1614,31 +1654,28 @@ header{position:relative;z-index:1000;}
 <!-- AUTH OVERLAY -->
 <div id="auth-overlay" class="auth-overlay">
   <div class="auth-card">
-    <svg style="width:200px;height:auto;margin-bottom:16px;" viewBox="0 0 2031 550" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M1406.81 481.104C1425.96 481.104 1433.89 493.141 1434.3 503.628V504.995H1423.86C1423.54 498.565 1419.48 490.588 1406.99 490.588C1394.27 490.589 1387.48 499.523 1387.48 515.115C1387.48 530.708 1394.27 539.647 1406.99 539.649C1419.57 539.649 1423.63 531.398 1424.14 524.786H1434.53V526.153C1433.89 537.005 1426 549.133 1406.81 549.133C1387.52 549.132 1376.08 536.956 1376.08 515.115C1376.08 493.276 1387.52 481.104 1406.81 481.104Z" fill="rgba(255,255,255,0.9)"/>
-      <path d="M969.046 538.235H1003.97V547.947H957.781V482.289H969.046V538.235Z" fill="rgba(255,255,255,0.9)"/>
-      <path d="M1057.76 491.177H1049.1V539.053H1057.76V547.947H1029.13V539.053H1037.79V491.177H1029.13V482.289H1057.76V491.177Z" fill="rgba(255,255,255,0.9)"/>
-      <path d="M1132.58 491.546H1098.06V510.601H1128.83V519.904H1098.06V547.947H1086.89V482.289H1132.58V491.546Z" fill="rgba(255,255,255,0.9)"/>
-      <path d="M1204.99 491.546H1169.28V510.192H1200.43V519.448H1169.28V538.691H1205.62V547.947H1158.11V482.289H1204.99V491.546Z" fill="rgba(255,255,255,0.9)"/>
-      <path d="M1282.46 491.907H1260.21V547.947H1248.94V491.907H1226.69V482.289H1282.46V491.907Z" fill="rgba(255,255,255,0.9)"/>
-      <path d="M1353.86 491.546H1318.16V510.192H1349.3V519.448H1318.16V538.691H1354.49V547.947H1306.99V482.289H1353.86V491.546Z" fill="rgba(255,255,255,0.9)"/>
-      <path d="M1469.54 510.058H1498.82V482.289H1510.03V547.947H1498.82V519.77H1469.54V547.947H1458.33V482.289H1469.54V510.058Z" fill="rgba(255,255,255,0.9)"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M1804.08 119.909C1885.97 119.911 1952.3 188.316 1952.3 272.664C1952.3 357.066 1885.97 425.418 1804.08 425.419C1773.05 425.419 1744.25 415.611 1720.47 398.762C1708.12 390.073 1697.12 379.5 1687.85 367.45C1689.52 380.412 1696.19 403.112 1720.52 428.654C1725.96 448.95 1725.03 482.884 1723.32 507.506C1722.13 524.774 1707.53 537.658 1690.22 537.659C1671.27 537.659 1655.9 522.294 1655.9 503.34V292.074C1655.9 289.06 1656 286.067 1656.19 283.099C1655.97 279.651 1655.85 276.171 1655.85 272.664C1655.85 220.254 1679.26 178.028 1715.46 150.196C1740.2 131.162 1770.86 119.909 1804.08 119.909ZM1804.06 181.87C1757.21 181.87 1719.23 222.523 1719.23 272.671C1719.23 322.818 1757.21 363.472 1804.06 363.472C1850.91 363.471 1888.88 322.818 1888.88 272.671C1888.88 222.523 1850.91 181.87 1804.06 181.87Z" fill="rgba(255,255,255,0.9)"/>
-      <path d="M868.955 129.052C891.498 129.052 906.988 151.715 898.807 172.721L765.844 514.13C761.037 526.469 749.147 534.592 735.905 534.592C712.995 534.59 697.449 511.295 706.241 490.139L736.622 417.04C737.744 414.341 737.782 411.312 736.722 408.588L645.586 174.308C637.126 152.558 653.166 129.1 676.503 129.099C690.563 129.099 703.101 137.965 707.788 151.221L761.544 303.253C765.567 314.261 769.051 325.635 771.524 338.128C771.816 339.59 774.186 339.59 774.484 338.128C777.036 325.621 780.735 314.215 784.718 303.206L838.749 150.411C843.275 137.61 855.378 129.052 868.955 129.052Z" fill="rgba(255,255,255,0.9)"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M1979.28 377.41C2008.61 377.41 2030.11 399.52 2030.11 428.031C2030.1 456.542 2008.61 478.438 1979.28 478.438C1950.15 478.437 1928.66 456.541 1928.66 428.031C1928.66 399.52 1950.15 377.411 1979.28 377.41ZM1979.28 396.833C1962.54 396.834 1950.36 409.851 1950.36 428.031C1950.36 446.004 1962.54 459.021 1979.28 459.022C1996.01 459.022 2008.41 446.005 2008.41 428.031C2008.41 409.85 1996.01 396.833 1979.28 396.833Z" fill="rgba(255,255,255,0.9)"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M1377.87 122.977C1455.91 122.977 1516.9 178.989 1516.91 259.095C1516.58 279.194 1500.19 295.322 1480.09 295.323H1296.79C1305.31 339.154 1336.42 364.738 1377.87 364.738C1402.24 364.738 1420.35 356.584 1434.75 343.848C1445.62 334.224 1460.73 329.477 1474.07 335.228C1490.41 342.274 1497.88 361.953 1486.83 375.896C1456.85 413.706 1416.9 420.797 1378.46 420.798L1378.5 420.751C1293.11 420.751 1232.76 359.846 1232.76 272.182C1232.76 184.519 1292.53 122.977 1377.87 122.977ZM1377.92 178.99C1337.06 178.991 1305.36 205.799 1296.84 246.597H1453.51C1449.84 210.054 1418.77 178.99 1377.92 178.99Z" fill="rgba(255,255,255,0.9)"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M149.419 122.977C235.447 122.977 299.428 188.139 299.428 272.182C299.428 356.226 235.986 420.751 149.419 420.751C63.441 420.751 0 356.225 0 272.182C0.000196629 188.139 63.3922 122.977 149.419 122.977ZM149.419 180.262C100.037 180.263 64.0304 218.616 64.0302 272.182C64.0302 325.749 99.9881 363.512 149.419 363.512C198.802 363.512 235.398 325.162 235.398 272.182C235.398 219.202 198.802 180.262 149.419 180.262Z" fill="rgba(255,255,255,0.9)"/>
-      <path d="M971.866 0C989.548 0 1003.88 14.3335 1003.88 32.0151V161.187C1003.88 163.878 1007.56 164.985 1009.19 162.848C1030.24 135.336 1062.11 122.984 1092.9 122.984C1150.81 122.984 1200.83 163.195 1200.83 245.378V382.333C1200.83 400.175 1186.36 414.642 1168.52 414.642C1150.67 414.642 1136.21 400.176 1136.21 382.333V256.925C1136.21 202.722 1105.73 180.805 1073.99 180.805C1039.25 180.807 1003.88 212.458 1003.88 261.767V382.842C1003.88 400.376 989.668 414.588 972.134 414.589C954.306 414.589 939.851 400.14 939.851 382.313V32.0151C939.851 14.3341 954.185 0.00100513 971.866 0Z" fill="rgba(255,255,255,0.9)"/>
-      <path d="M1581.45 0C1599.13 0.000731724 1613.46 14.3339 1613.46 32.0151V382.627C1613.46 400.307 1599.13 414.642 1581.45 414.642C1563.76 414.642 1549.43 400.308 1549.43 382.627V32.0151C1549.43 14.3335 1563.76 0 1581.45 0Z" fill="rgba(255,255,255,0.9)"/>
-      <path d="M582.179 129.4C599.44 129.401 613.793 143.546 610.336 160.457C599.398 213.974 560.394 255.292 507.473 269.342C505.134 269.963 505.133 273.914 507.473 274.533C560.449 288.556 599.498 329.898 610.444 383.451C613.9 400.363 599.548 414.508 582.286 414.508C565.025 414.508 551.63 400.171 546.427 383.712C535.308 348.538 505.074 325.282 467.059 325.281C429.058 325.282 399.201 348.519 388.227 383.672C383.079 400.163 369.669 414.508 352.394 414.508C335.12 414.507 320.762 400.354 324.196 383.424C335.046 329.939 373.719 288.609 426.511 274.56C428.847 273.936 428.842 269.989 426.504 269.369C373.659 255.346 334.946 214.004 324.089 160.484C320.655 143.554 335.012 129.401 352.287 129.4C369.562 129.4 382.965 143.745 388.113 160.236C399.086 195.39 428.949 218.627 466.952 218.627C504.966 218.627 535.2 195.37 546.32 160.196C551.523 143.738 564.918 129.4 582.179 129.4Z" fill="rgba(255,255,255,0.9)"/>
-    </svg>
-    <h2>Cockpit</h2>
-    <p>Sign in to sync tasks across all your devices — laptop, phone, anywhere.</p>
+    <!-- Breathing O₂ symbol: the big O is the lung, ripples radiate from its center -->
+    <div class="oxy-breath-wrap">
+      <span class="oxy-ripple oxy-ripple-1"></span>
+      <span class="oxy-ripple oxy-ripple-2"></span>
+      <span class="oxy-ripple oxy-ripple-3"></span>
+      <span class="oxy-glow"></span>
+      <svg class="oxy-breath-mark" viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- big O (the lung) -->
+        <circle cx="46" cy="46" r="30" fill="none" stroke="var(--brand)" stroke-width="13"/>
+        <!-- small o (the dot) -->
+        <circle cx="86" cy="74" r="11" fill="none" stroke="var(--brand)" stroke-width="7"/>
+      </svg>
+    </div>
+    <div class="auth-kicker">○ OXYHELP COCKPIT</div>
+    <h2>Welcome back</h2>
+    <p>Your personal execution assistant. Sign in to open today's board.</p>
     <button class="btn-google" onclick="signInWithGoogle()">
       <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
       Sign in with Google
     </button>
     <button class="auth-skip" onclick="skipAuth()">Use offline (no sync)</button>
+    <div class="auth-footer">OXYHELP LIFETECH · BUCHAREST</div>
   </div>
 </div>
 
