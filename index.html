@@ -871,7 +871,28 @@ header{position:relative;z-index:1000;}
 .tb-filter{font-family:var(--mono);font-size:10px;background:var(--bg);border:1px solid var(--border);color:var(--text-faint);padding:4px 10px;border-radius:6px;cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .15s;}
 .tb-filter:hover{border-color:var(--brand);color:var(--brand);}
 
-#status-board{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:8px 24px 0;flex-shrink:0;height:180px;min-height:120px;overflow:hidden;}
+/* ── BOARD SIDE PANEL (on-demand, right side, vertical columns) ── */
+#center-main{position:relative;}
+#board-toggle-btn{position:absolute;top:16px;right:24px;z-index:30;}
+#board-panel{width:420px;flex-shrink:0;border-left:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;overflow:hidden;transition:width var(--dur) var(--ease),opacity var(--dur) var(--ease);}
+#board-panel.board-panel-hidden{width:0;border-left:none;opacity:0;pointer-events:none;}
+#board-panel-head{display:flex;align-items:center;gap:8px;padding:14px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.board-panel-ic{stroke:var(--brand);fill:none;stroke-width:1.6;flex-shrink:0;}
+.board-panel-title{font-size:14px;font-weight:600;color:var(--text);}
+.board-panel-count{font-family:var(--mono);font-size:11px;color:var(--text-soft);background:var(--surface2);padding:2px 7px;border-radius:4px;}
+.board-panel-hint{font-family:var(--mono);font-size:10px;color:var(--text-faint);margin-left:auto;text-transform:lowercase;letter-spacing:.3px;}
+#board-panel-close{background:none;border:none;color:var(--text-soft);font-size:15px;cursor:pointer;padding:2px 6px;border-radius:5px;line-height:1;transition:all var(--dur) var(--ease);margin-left:10px;}
+#board-panel-close:hover{background:var(--surface2);color:var(--text);}
+#board-panel #status-board{display:flex;flex-direction:column;gap:12px;padding:14px 16px;height:auto;min-height:0;flex:1;overflow-y:auto;}
+#board-panel #task-board-bar{display:none;}
+#board-panel #board-resize-handle{display:none;}
+#board-panel .board-col{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;}
+/* Show/Hide board toggle button (lives near chat hero) */
+#board-toggle-btn{display:inline-flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--border);color:var(--text-mid);font-family:var(--font);font-size:12.5px;font-weight:500;padding:0 14px;height:34px;border-radius:6px;cursor:pointer;transition:all var(--dur) var(--ease);white-space:nowrap;}
+#board-toggle-btn:hover{border-color:var(--brand);color:var(--text);}
+#board-toggle-btn.board-on{background:var(--brand);border-color:var(--brand);color:#1C1816;}
+#board-toggle-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.6;}
+@media(max-width:860px){#board-panel{position:fixed;top:56px;right:0;bottom:0;width:88%!important;max-width:380px;z-index:120;box-shadow:-8px 0 32px rgba(0,0,0,.2);}#board-panel.board-panel-hidden{width:0!important;}}
 .board-col{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
 .board-col-active{border-color:var(--brand-mid);box-shadow:0 0 0 1px var(--brand-mid);}
 .board-col-head{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;color:var(--text);margin-bottom:10px;flex-shrink:0;}
@@ -1263,6 +1284,11 @@ header{position:relative;z-index:1000;}
 
   <!-- ── CENTER MAIN ── -->
   <section id="center-main">
+    <!-- Board on-demand toggle (top-right of work area) -->
+    <button id="board-toggle-btn" onclick="toggleBoardPanel()" title="Show board">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="6" height="18" rx="1"/><rect x="9.5" y="3" width="5" height="18" rx="1"/><rect x="15" y="3" width="6" height="18" rx="1"/></svg>
+      <span id="board-toggle-label">Show board</span>
+    </button>
     <!-- Hero block: kicker + headline + stat row -->
     <div id="hero-block">
       <div id="hero-kicker"><span id="hero-kicker-label">THE FIRST BREATH</span> · <span id="hero-time">—</span></div>
@@ -1344,33 +1370,45 @@ header{position:relative;z-index:1000;}
       <button id="send-btn" onclick="handleSend()"><svg class="bar-ic" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></button>
     </div>
 
-    <!-- Resize handle: drag up/down to resize status board -->
-    <div id="board-resize-handle" title="Drag to resize"></div>
-    <!-- Status board: 3 columns -->
-    <div id="task-board-bar">
-      <span class="tb-label">All today</span>
-      <span class="tb-meta" id="tb-meta"></span>
-      <div style="flex:1;height:1px;background:var(--border);margin:0 12px;"></div>
-      <button class="tb-filter">Filter</button>
-    </div>
-    <div id="status-board">
-      <div class="board-col" data-status="todo">
-        <div class="board-col-head"><span class="col-dot"></span><span class="col-name">To do</span> <span class="col-count" id="col-count-todo">0</span></div>
-        <div class="board-col-body" id="board-todo"></div>
-      </div>
-      <div class="board-col board-col-active" data-status="in_progress">
-        <div class="board-col-head"><span class="col-dot active"></span><span class="col-name">In progress</span> <span class="col-count" id="col-count-progress">0</span></div>
-        <div class="board-col-body" id="board-progress"></div>
-      </div>
-      <div class="board-col" data-status="done">
-        <div class="board-col-head"><span class="col-dot done"></span><span class="col-name">Done</span> <span class="col-count" id="col-count-done">0</span></div>
-        <div class="board-col-body" id="board-done"></div>
-      </div>
-    </div>
     <!-- Hidden legacy task scroll (notif sections still write here) -->
     <div id="task-scroll" style="display:none"></div>
     <div id="notif-section-container"></div>
   </section>
+
+    <!-- ── BOARD SIDE PANEL (on-demand) ── -->
+    <div id="board-panel" class="board-panel-hidden">
+      <div id="board-panel-head">
+        <svg class="board-panel-ic" viewBox="0 0 24 24" width="16" height="16"><rect x="3" y="3" width="6" height="18" rx="1"/><rect x="9.5" y="3" width="5" height="18" rx="1"/><rect x="15" y="3" width="6" height="18" rx="1"/></svg>
+        <span class="board-panel-title">Status board</span>
+        <span class="board-panel-count" id="board-panel-count"></span>
+        <span class="board-panel-hint">drag cards to update status</span>
+        <button id="board-panel-close" onclick="toggleBoardPanel()" title="Hide board">✕</button>
+      </div>
+      <!-- Resize handle: drag up/down to resize status board -->
+      <div id="board-resize-handle" title="Drag to resize"></div>
+      <!-- Status board: 3 columns -->
+      <div id="task-board-bar">
+        <span class="tb-label">All today</span>
+        <span class="tb-meta" id="tb-meta"></span>
+        <div style="flex:1;height:1px;background:var(--border);margin:0 12px;"></div>
+        <button class="tb-filter">Filter</button>
+      </div>
+      <div id="status-board">
+        <div class="board-col" data-status="todo">
+          <div class="board-col-head"><span class="col-dot"></span><span class="col-name">To do</span> <span class="col-count" id="col-count-todo">0</span></div>
+          <div class="board-col-body" id="board-todo"></div>
+        </div>
+        <div class="board-col board-col-active" data-status="in_progress">
+          <div class="board-col-head"><span class="col-dot active"></span><span class="col-name">In progress</span> <span class="col-count" id="col-count-progress">0</span></div>
+          <div class="board-col-body" id="board-progress"></div>
+        </div>
+        <div class="board-col" data-status="done">
+          <div class="board-col-head"><span class="col-dot done"></span><span class="col-name">Done</span> <span class="col-count" id="col-count-done">0</span></div>
+          <div class="board-col-body" id="board-done"></div>
+        </div>
+      </div>
+    </div>
+
 
   <!-- ── RIGHT RAIL ── -->
   <aside id="right-rail">
@@ -5811,9 +5849,12 @@ async function init(){
 // ── DARK MODE ──────────────────────────────────────────
 // ── BOARD RESIZE (drag handle) ──
 function initBoardResize(){
-  const handle = document.getElementById('board-resize-handle');
+  // Board is now a vertical side panel (on-demand) — vertical resize no longer applies.
   const board = document.getElementById('status-board');
-  if(!handle || !board) return;
+  if(board) board.style.height = '';  // clear any stale saved height
+  return;
+  /* legacy vertical-resize disabled
+  const handle = document.getElementById('board-resize-handle');
 
   // Restore saved height (clamped so it never crushes the chat area)
   try{
@@ -5863,6 +5904,7 @@ function initBoardResize(){
   document.addEventListener('touchmove', onMove, {passive:false});
   document.addEventListener('mouseup', onUp);
   document.addEventListener('touchend', onUp);
+  legacy vertical-resize disabled */
 }
 // Initialize after DOM ready
 if(document.readyState === 'loading'){
@@ -5876,6 +5918,20 @@ function initDarkMode(){
   const isDark = saved ? saved === 'dark' : true; // dark by default
   if(isDark) document.documentElement.setAttribute('data-theme','dark');
   updateDarkModeBtn();
+}
+
+function toggleBoardPanel(){
+  const panel = document.getElementById('board-panel');
+  const btn = document.getElementById('board-toggle-btn');
+  const label = document.getElementById('board-toggle-label');
+  if(!panel) return;
+  const hidden = panel.classList.toggle('board-panel-hidden');
+  if(btn) btn.classList.toggle('board-on', !hidden);
+  if(label) label.textContent = hidden ? 'Show board' : 'Hide board';
+  if(!hidden){
+    // refresh counts when opening
+    try{ if(typeof renderTasks==='function') renderTasks(); }catch(e){}
+  }
 }
 
 function toggleDarkMode(){
